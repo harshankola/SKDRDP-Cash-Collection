@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Cash Collection App</string>
+    <string name="title_activity_main">SKDRDP Cash Collection</string>
+    <string name="action_exit">Exit</string>
+    <string name="action_download">Download data from Computer</string>
+    <string name="action_upload">Upload file to Computer</string>
+    <string name="action_group_select">Select the Group</string>
+    <string name="show_member_list">Members in the Group</string>
+    <string name="action_payment_confirm">Confirm payment</string>
+    <string name="action_inflate">Save data to app</string>
+    <string name="action_create_json">Prepare the file</string>
+    <string name="action_save_collection">Save</string>
+
+    <!-- text Labels -->
+    <string name="txt_member_id">MemID</string>
+    <string name="txt_member_name">Name</string>
+    <string name="txt_savings">MM</string>
+    <string name="txt_installments">EWI</string>
+    <string name="txt_is_present">Present</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_password">Password (Necessary)</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

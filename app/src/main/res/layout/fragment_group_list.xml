@@ -1,0 +1,15 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.skdrdpindia.cashcollectionapp.ui.GroupListFragment"
+    android:clickable="false">
+
+    <!-- TODO: Update blank fragment layout -->
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/GroupListView"
+        android:clickable="true"
+        tools:listitem="@layout/group_list_item"
+        android:focusable="false" />
+</FrameLayout>

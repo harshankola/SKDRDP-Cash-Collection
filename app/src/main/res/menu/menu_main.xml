@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="org.skdrdpindia.cashcollectionapp.ui.MainActivity">
+    <item android:id="@+id/action_exit" android:title="@string/action_exit"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_download" android:title="@string/action_download"
+        android:orderInCategory="101" app:showAsAction="never"/>
+    <item android:id="@+id/action_upload" android:title="@string/action_upload"
+        android:orderInCategory="102" app:showAsAction="never"/>
+</menu>
