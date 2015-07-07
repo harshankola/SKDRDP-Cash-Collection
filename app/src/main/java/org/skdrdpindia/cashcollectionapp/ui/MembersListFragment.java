@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 
 import org.skdrdpindia.cashcollectionapp.R;
 import org.skdrdpindia.cashcollectionapp.provider.GroupsContentProvider;
+import org.skdrdpindia.cashcollectionapp.provider.GroupsContract;
 import org.skdrdpindia.cashcollectionapp.provider.MembersContract;
 
 
@@ -44,6 +47,7 @@ public class MembersListFragment
     private OnFragmentInteractionListener mListener;
     private MemberListAdapter membersAdapter;
     private int totalSum = 0;
+    private long groupSelected;
 
     public MembersListFragment() {
         // Required empty public constructor
@@ -80,6 +84,7 @@ public class MembersListFragment
         // Inflate the layout for this fragment
         View membersListFragment = inflater.inflate(R.layout.fragment_members_list, container, false);
         Bundle bundle = getArguments();
+        groupSelected = bundle.getLong("GROUP_SELECTED");
 
         // initialize the Adapter and views.
         membersListView = (ListView) membersListFragment.findViewById(R.id.MembersList);
@@ -125,12 +130,43 @@ public class MembersListFragment
 
     public void saveCashCollection() {
         //TODO: implement cash collection insert operations.
+
+        // Get access to database.
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        Uri groupsContentProvider = Uri.parse("content://" + GroupsContentProvider.PROVIDER_URI);
+        groupsContentProvider = Uri.withAppendedPath(groupsContentProvider, GroupsContract.GroupsInfo.TABLE_NAME);
+
+        Uri membersContentProvider = Uri.parse("content://" + GroupsContentProvider.PROVIDER_URI);
+        membersContentProvider = Uri.withAppendedPath(membersContentProvider, MembersContract.MemberInfo.TABLE_NAME);
+
         //update each row separately.
-        for (int memberAtPosition = 0; memberAtPosition < membersAdapter.getCursor().getCount(); memberAtPosition += 1) {
+        Cursor memberList = membersAdapter.getCursor();
+        for (int memberAtPosition = 0;
+             memberAtPosition < memberList.getCount();
+             memberAtPosition += 1, memberList.moveToNext()) {
+
+            //get the data from members list view.
             View memberListItem = membersListView.getChildAt(memberAtPosition);
             boolean presence = membersAdapter.isPresent(memberListItem);
             int[] membersCollection = membersAdapter.getMembersCollection(memberListItem);
+
+            //get the ID from member cursor
+            long memberID = memberList.getLong(
+                    memberList.getColumnIndex(MembersContract.MemberInfo.MEMBER_ID));
+
+            ContentValues memberData = new ContentValues();
+            memberData.put(MembersContract.MemberInfo.INSTALLMENT, membersCollection[0]);
+            memberData.put(MembersContract.MemberInfo.SAVINGS, membersCollection[1]);
+            memberData.put(MembersContract.MemberInfo.IS_PRESENT, presence ? 0 : 1);
+            String where = MembersContract.MemberInfo.MEMBER_ID + "=" + memberID;
+            contentResolver.update(membersContentProvider, memberData, where, null);
         }
+
+        //update the groups to indicate the list has been updated.
+        ContentValues groupData = new ContentValues();
+        groupData.put(GroupsContract.GroupsInfo.IS_SHOWN, 0);
+        String groupCondiction = GroupsContract.GroupsInfo.GROUP_ID + "=" + groupSelected;
+        contentResolver.update(groupsContentProvider, groupData, groupCondiction, null);
 
         //after updation is done, do the back button pressing event.
         ((MainActivity) this.getActivity()).swapFragment(new GroupListFragment());
