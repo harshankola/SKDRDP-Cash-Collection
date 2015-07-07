@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import org.skdrdpindia.cashcollectionapp.R;
@@ -43,7 +42,7 @@ public class MembersListFragment
     private static MembersListFragment memberListFragment;
     ListView membersListView;
     private OnFragmentInteractionListener mListener;
-    private SimpleCursorAdapter membersAdapter;
+    private MemberListAdapter membersAdapter;
     private int totalSum = 0;
 
     public MembersListFragment() {
@@ -85,7 +84,7 @@ public class MembersListFragment
         // initialize the Adapter and views.
         membersListView = (ListView) membersListFragment.findViewById(R.id.MembersList);
         membersAdapter = new MemberListAdapter(getActivity().getApplicationContext());
-        membersAdapter.setViewBinder((SimpleCursorAdapter.ViewBinder) membersAdapter);
+        membersAdapter.setViewBinder(membersAdapter);
 
         //set the adapter.
         membersListView.setAdapter(membersAdapter);
@@ -127,7 +126,10 @@ public class MembersListFragment
     public void saveCashCollection() {
         //TODO: implement cash collection insert operations.
         //update each row separately.
-
+        for (int memberAtPosition = 0; memberAtPosition < membersAdapter.getCursor().getCount(); memberAtPosition += 1) {
+            View memberListItem = membersListView.getChildAt(memberAtPosition);
+            membersAdapter.isPresent(memberListItem);
+        }
 
         //after updation is done, do the back button pressing event.
         ((MainActivity) this.getActivity()).swapFragment(new GroupListFragment());
@@ -234,7 +236,7 @@ public class MembersListFragment
      */
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        updateCashCollected((Editable) s,false);
+        updateCashCollected((Editable) s, false);
     }
 
     /**

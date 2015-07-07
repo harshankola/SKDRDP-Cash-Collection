@@ -33,7 +33,7 @@ public class MemberListAdapter extends SimpleCursorAdapter
     public MemberListAdapter(Context context) {
         super(context,
                 R.layout.member_list_item,
-                AppState.status.membersList,
+                null,
                 new String[]{
                         MembersContract.MemberInfo.MEMBER_ID,
                         MembersContract.MemberInfo.MEMBER_NAME,
