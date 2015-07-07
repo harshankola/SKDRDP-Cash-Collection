@@ -128,7 +128,8 @@ public class MembersListFragment
         //update each row separately.
         for (int memberAtPosition = 0; memberAtPosition < membersAdapter.getCursor().getCount(); memberAtPosition += 1) {
             View memberListItem = membersListView.getChildAt(memberAtPosition);
-            membersAdapter.isPresent(memberListItem);
+            boolean presence = membersAdapter.isPresent(memberListItem);
+            int[] membersCollection = membersAdapter.getMembersCollection(memberListItem);
         }
 
         //after updation is done, do the back button pressing event.

@@ -37,6 +37,6 @@
         android:layout_height="50dp"
         android:id="@+id/chkIsPresent"
         android:layout_weight="1"
-        android:checked="true" />
+        android:checked="false" />
 
 </LinearLayout>

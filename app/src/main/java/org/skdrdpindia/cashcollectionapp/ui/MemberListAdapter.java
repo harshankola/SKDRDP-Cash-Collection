@@ -154,6 +154,14 @@ public class MemberListAdapter extends SimpleCursorAdapter
         return memberListHolder.chkIsPresent.isChecked();
     }
 
+    public int[] getMembersCollection(View memberListItem) {
+        MemberListHolder memberListHolder = (MemberListHolder) memberListItem.getTag();
+        int installment = Integer.parseInt(memberListHolder.edtxtInstallment.getText().toString());
+        int savings = Integer.parseInt(memberListHolder.edtxtSavings.getText().toString());
+
+        return new int[]{installment, savings};
+    }
+
     private class MemberListHolder {
         TextView txtMemberID, txtMemberName;
         EditText edtxtInstallment, edtxtSavings;
