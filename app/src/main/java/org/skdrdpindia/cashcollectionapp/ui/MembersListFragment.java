@@ -1,6 +1,7 @@
 package org.skdrdpindia.cashcollectionapp.ui;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.content.Context;
@@ -9,7 +10,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.TextWatcher;
@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -131,10 +130,7 @@ public class MembersListFragment
 
 
         //after updation is done, do the back button pressing event.
-
-        AppState.status.fragmentChanger = getFragmentManager().beginTransaction();
-        AppState.status.fragmentChanger.replace(R.id.fragment, new GroupListFragment());
-        AppState.status.fragmentChanger.commit();
+        ((MainActivity) this.getActivity()).swapFragment(new GroupListFragment());
     }
 
     /**

@@ -36,7 +36,7 @@ public class GroupsContentProvider extends ContentProvider {
     }
 
     @Override
-    public synchronized int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
         // Implement this to handle requests to delete one or more rows.
         int rowsDeleted = 0;
         SQLiteDatabase db;
@@ -88,7 +88,7 @@ public class GroupsContentProvider extends ContentProvider {
     }
 
     @Override
-    public synchronized String getType(Uri uri) {
+    public String getType(Uri uri) {
         // return android type of input string.
         String tableType = "vnd.android.cursor.dir/vnd.org.skdrdpindia.cashcollectionapp.provider.";
         String itemType = "vnd.android.cursor.item/vnd.org.skdrdpindia.cashcollectionapp.provider.";
@@ -108,7 +108,7 @@ public class GroupsContentProvider extends ContentProvider {
     }
 
     @Override
-    public synchronized Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(Uri uri, ContentValues values) {
         //declare row_id which will be returned as URI's row ID.
         long id = 0;
         SQLiteDatabase db;
@@ -131,7 +131,7 @@ public class GroupsContentProvider extends ContentProvider {
     }
 
     @Override
-    public synchronized boolean onCreate() {
+    public boolean onCreate() {
         // setup the database helper object.
         groupsDb = new GroupsDbHelper(getContext());
         membersDb = new MembersDbHelper(getContext());
@@ -139,7 +139,7 @@ public class GroupsContentProvider extends ContentProvider {
     }
 
     @Override
-    public synchronized Cursor query(Uri uri, String[] projection, String selection,
+    public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
         //Create query builder instance
         SQLiteDatabase db;
@@ -185,7 +185,7 @@ public class GroupsContentProvider extends ContentProvider {
     }
 
     @Override
-    public synchronized int update(Uri uri, ContentValues values, String selection,
+    public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
         // TODO: Implement this to handle requests to update one or more rows.
         int rowsUpdated = 0;

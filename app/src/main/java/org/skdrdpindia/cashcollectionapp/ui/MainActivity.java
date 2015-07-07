@@ -1,24 +1,20 @@
 package org.skdrdpindia.cashcollectionapp.ui;
 
+import android.app.Fragment;
 import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import org.skdrdpindia.cashcollectionapp.R;
-import org.skdrdpindia.cashcollectionapp.ui.AppState;
-import org.skdrdpindia.cashcollectionapp.ui.DownloadDataFragment;
-import org.skdrdpindia.cashcollectionapp.ui.GroupListFragment;
-import org.skdrdpindia.cashcollectionapp.ui.MembersListFragment;
 
 
 public class MainActivity extends ActionBarActivity
         implements GroupListFragment.OnFragmentInteractionListener,
         MembersListFragment.OnFragmentInteractionListener {
 
-    DownloadDataFragment downloadDataFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,15 +48,25 @@ public class MainActivity extends ActionBarActivity
             finish();
         }
         else if (id == R.id.action_download) {
-            downloadDataFragment = new DownloadDataFragment();
-
-            AppState.status.fragmentChanger = getFragmentManager().beginTransaction();
-            AppState.status.fragmentChanger.replace(R.id.fragment, downloadDataFragment);
-            AppState.status.fragmentChanger.addToBackStack(null);
-            AppState.status.fragmentChanger.commit();
+            Fragment downloadDataFragment = new DownloadDataFragment();
+            swapFragment(downloadDataFragment);
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void inflateDb(View view) {
+        // Save Json to Database
+
+        //load the group list fragment
+        Fragment groupListFragment = new GroupListFragment();
+        swapFragment(groupListFragment);
+    }
+
+    public void swapFragment(Fragment fragment) {
+        AppState.status.fragmentChanger = getFragmentManager().beginTransaction();
+        AppState.status.fragmentChanger.replace(R.id.fragment, fragment);
+        AppState.status.fragmentChanger.commit();
     }
 
     @Override

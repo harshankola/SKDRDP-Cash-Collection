@@ -1,6 +1,7 @@
 package org.skdrdpindia.cashcollectionapp.ui;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.content.Context;
@@ -9,7 +10,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -123,7 +123,7 @@ public class GroupListFragment extends Fragment
         Cursor groupList = (Cursor) parent.getItemAtPosition(position);
         MembersListFragment membersListFragment = new MembersListFragment();
         Bundle bundle = new Bundle();
-        bundle.putLong("GROUP_SELECTED",groupList.getLong(
+        bundle.putLong("GROUP_SELECTED", groupList.getLong(
                 groupList.getColumnIndex(
                         GroupsContract.GroupsInfo.GROUP_ID
                 )
@@ -131,10 +131,7 @@ public class GroupListFragment extends Fragment
         membersListFragment.setArguments(bundle);
 
         //Start member list fragment.
-        AppState.status.fragmentChanger = getFragmentManager().beginTransaction();
-        AppState.status.fragmentChanger.replace(R.id.fragment, membersListFragment);
-        AppState.status.fragmentChanger.addToBackStack(null);
-        AppState.status.fragmentChanger.commit();
+        ((MainActivity) this.getActivity()).swapFragment(membersListFragment);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

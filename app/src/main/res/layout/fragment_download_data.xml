@@ -21,6 +21,7 @@
         android:id="@+id/btnInflatedb"
         android:layout_gravity="bottom"
         android:enabled="true"
-        android:clickable="true" />
+        android:clickable="true"
+        android:onClick="inflateDb" />
 
 </LinearLayout>
