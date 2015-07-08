@@ -145,6 +145,8 @@ public class GroupsContentProvider extends ContentProvider {
         // setup the database helper object.
         groupsDb = new GroupsDbHelper(getContext());
         membersDb = new MembersDbHelper(getContext());
+        groupsDb.onUpgrade(groupsDb.getWritableDatabase(), 1, 1);
+        membersDb.onUpgrade(groupsDb.getWritableDatabase(), 1, 1);
         return true;
     }
 

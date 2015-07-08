@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -153,7 +154,9 @@ public class MembersListFragment
              memberAtPosition += 1, memberList.moveToNext()) {
 
             //get the data from members list view.
-            View memberListItem = membersListView.getChildAt(memberAtPosition);
+            View memberListItem = membersAdapter.getView(memberAtPosition,
+                    membersListView.getChildAt(memberAtPosition),
+                    membersListView);
             boolean presence = membersAdapter.isPresent(memberListItem);
             int[] membersCollection = membersAdapter.getMembersCollection(memberListItem);
 
@@ -165,7 +168,13 @@ public class MembersListFragment
             memberData.put(MembersContract.MemberInfo.INSTALLMENT, membersCollection[0]);
             memberData.put(MembersContract.MemberInfo.SAVINGS, membersCollection[1]);
             memberData.put(MembersContract.MemberInfo.IS_PRESENT, presence ? 1 : 0);
-            String where = MembersContract.MemberInfo.MEMBER_ID + "=" + memberID;
+            String where = MembersContract.MemberInfo.MEMBER_ID
+                    + "="
+                    + memberID
+                    + " and "
+                    + GroupsContract.GroupsInfo.GROUP_ID
+                    + "="
+                    + groupSelected;
             contentResolver.update(GroupsContentProvider.MEMBERS_PROVIDER_URI, memberData, where, null);
         }
 
@@ -189,7 +198,8 @@ public class MembersListFragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String SELECTION = MembersContract.MemberInfo.GROUP_ID + "=" + args.getLong("GROUP_SELECTED");
+        String SELECTION = MembersContract.MemberInfo.GROUP_ID + "=" + groupSelected;
+        Log.d("SKDRDP Member Frag", "Members from group " + groupSelected);
         return new CursorLoader(getActivity(), GroupsContentProvider.MEMBERS_PROVIDER_URI,
                 new String[]{
                         MembersContract.MemberInfo._ID,
@@ -244,6 +254,7 @@ public class MembersListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         membersAdapter.swapCursor(data);
+        Log.d("Mem Cursor", "Items in cursor=" + data.getCount());
     }
 
     /**
@@ -267,14 +278,17 @@ public class MembersListFragment
      */
     private void updateCashCollected(Editable cashCollected, boolean toIncrement) {
         TextView txtTotalCollection = (TextView) getActivity().findViewById(R.id.txtTotalCollection);
-        if (!toIncrement){
-            totalSum -= Integer.parseInt(cashCollected.toString());
-        }
-        else {
-            totalSum += Integer.parseInt(cashCollected.toString());
+        if (!cashCollected
+                .toString()
+                .isEmpty()) {
+            if (!toIncrement) {
+                totalSum -= Integer.parseInt(cashCollected.toString());
+            } else {
+                totalSum += Integer.parseInt(cashCollected.toString());
+            }
         }
 
-        txtTotalCollection.setText(totalSum);
+        txtTotalCollection.setText(totalSum + " Rupees");
     }
 
     /**

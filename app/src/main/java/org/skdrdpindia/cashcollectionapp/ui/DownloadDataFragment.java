@@ -58,11 +58,12 @@ public class DownloadDataFragment extends Fragment {
                 for (int j = 0; j < 10; j++) {
                     ContentValues memvalues = new ContentValues();
                     memvalues.put(MembersContract.MemberInfo.GROUP_ID, i + 1);
-                    memvalues.put(MembersContract.MemberInfo.MEMBER_ID, j + 1);
+                    memvalues.put(MembersContract.MemberInfo.MEMBER_ID, ((i + 1) * 10) + (j + 1));
                     memvalues.put(MembersContract.MemberInfo.MEMBER_NAME, "mem" + j);
                     memvalues.put(MembersContract.MemberInfo.INSTALLMENT, 0);
                     memvalues.put(MembersContract.MemberInfo.SAVINGS, 0);
-                    memvalues.put(MembersContract.MemberInfo.IS_PRESENT, 1);
+                    memvalues.put(MembersContract.MemberInfo.IS_PRESENT, 0);
+                    Log.d("SKDRDP Member insert", "grp " + (i + 1) + " mem " + ((i + 1) * 10) + (j + 1));
                     try {
                         contentResolver.insert(GroupsContentProvider.MEMBERS_PROVIDER_URI, memvalues);
                     } catch (Exception e) {

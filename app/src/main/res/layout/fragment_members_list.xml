@@ -9,12 +9,16 @@
         android:layout_height="0dp"
         android:id="@+id/MembersList"
         tools:listitem="@layout/member_list_item"
-        android:layout_weight="9" />
+        android:layout_weight="9"
+        android:clickable="false"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txtTotalCollection" />
+        android:id="@+id/txtTotalCollection"
+        android:editable="true"
+        android:text="0"
+        android:textSize="24sp"/>
 
     <Button
         android:layout_width="match_parent"

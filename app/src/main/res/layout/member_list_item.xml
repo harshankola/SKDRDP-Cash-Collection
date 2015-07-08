@@ -22,7 +22,9 @@
         android:inputType="number"
         android:id="@+id/edtxtInstallment"
         android:layout_weight="2"
-        android:text="0" />
+        android:text="0"
+        android:clickable="true"
+        android:editable="true"/>
 
     <EditText
         android:layout_width="0dp"
@@ -30,13 +32,16 @@
         android:inputType="number"
         android:id="@+id/edtxtSavings"
         android:layout_weight="2"
-        android:text="0" />
+        android:text="0"
+        android:clickable="true"
+        android:editable="true"/>
 
     <CheckBox
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:id="@+id/chkIsPresent"
         android:layout_weight="1"
-        android:checked="false" />
+        android:checked="false"
+        android:clickable="true"/>
 
 </LinearLayout>

@@ -2,6 +2,7 @@ package org.skdrdpindia.cashcollectionapp.ui;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,12 +88,15 @@ public class MemberListAdapter extends SimpleCursorAdapter
             memberListHolder.edtxtSavings = (EditText) memberListItem.findViewById(R.id.edtxtSavings);
             memberListHolder.chkIsPresent = (CheckBox) memberListItem.findViewById(R.id.chkIsPresent);
             memberListItem.setTag(memberListHolder);
+            Log.d("Mem Adapter", "New view: Member ID is =" + memberListHolder.txtMemberID.getText());
+            Log.d("Mem Adapter", "row id=" + getCursor().getLong(getCursor().getColumnIndex(MembersContract.MemberInfo._ID)));
         } else {
             memberListItem = convertView;
         }
 
         // Initialize the member data by binding all the views with their respective data.
-        bindView(memberListItem, context, AppState.status.membersList);
+        bindView(memberListItem, context, getCursor());
+        Log.d("Mem Adapter", "Member view for:" + "pos=" + position);
 
         return memberListItem;
     }
