@@ -39,10 +39,13 @@ import org.skdrdpindia.cashcollectionapp.provider.MembersContract;
  */
 public class MembersListFragment
         extends Fragment
-        implements LoaderManager.LoaderCallbacks<Cursor>,
-        TextWatcher, View.OnClickListener {
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static MembersListFragment memberListFragment;
+
+
+    private final CashCollectionWatcher collectionWatcher = new CashCollectionWatcher();
+    private final SaveCollectionListener saveCollectionListener = new SaveCollectionListener();
     ListView membersListView;
     private OnFragmentInteractionListener mListener;
     private MemberListAdapter membersAdapter;
@@ -51,7 +54,7 @@ public class MembersListFragment
 
     public MembersListFragment() {
         // Required empty public constructor
-        memberListFragment = this;
+        memberListFragment = MembersListFragment.this;
     }
 
     /**
@@ -70,6 +73,15 @@ public class MembersListFragment
             return memberListFragment;
         }
         return newInstance();
+    }
+
+    /**
+     * gets instance of Listener hearing Cash Collections.
+     *
+     * @return instance of Cash Collection Watcher.
+     */
+    public CashCollectionWatcher getCollectionWatcher() {
+        return collectionWatcher;
     }
 
     @Override
@@ -96,10 +108,10 @@ public class MembersListFragment
 
         //set listener for save collection button.
         Button btnSaveCollection = (Button) membersListFragment.findViewById(R.id.btnSaveCollection);
-        btnSaveCollection.setOnClickListener(this);
+        btnSaveCollection.setOnClickListener(saveCollectionListener);
 
         //Prepare the loader.
-        getLoaderManager().initLoader(0, bundle, this);
+        getLoaderManager().initLoader(0, bundle, MembersListFragment.this);
 
         return membersListFragment;
     }
@@ -133,13 +145,8 @@ public class MembersListFragment
 
         // Get access to database.
         ContentResolver contentResolver = getActivity().getContentResolver();
-        Uri groupsContentProvider = Uri.parse("content://" + GroupsContentProvider.PROVIDER_URI);
-        groupsContentProvider = Uri.withAppendedPath(groupsContentProvider, GroupsContract.GroupsInfo.TABLE_NAME);
 
-        Uri membersContentProvider = Uri.parse("content://" + GroupsContentProvider.PROVIDER_URI);
-        membersContentProvider = Uri.withAppendedPath(membersContentProvider, MembersContract.MemberInfo.TABLE_NAME);
-
-        //update each row separately.
+        //update each member separately.
         Cursor memberList = membersAdapter.getCursor();
         for (int memberAtPosition = 0;
              memberAtPosition < memberList.getCount();
@@ -157,16 +164,16 @@ public class MembersListFragment
             ContentValues memberData = new ContentValues();
             memberData.put(MembersContract.MemberInfo.INSTALLMENT, membersCollection[0]);
             memberData.put(MembersContract.MemberInfo.SAVINGS, membersCollection[1]);
-            memberData.put(MembersContract.MemberInfo.IS_PRESENT, presence ? 0 : 1);
+            memberData.put(MembersContract.MemberInfo.IS_PRESENT, presence ? 1 : 0);
             String where = MembersContract.MemberInfo.MEMBER_ID + "=" + memberID;
-            contentResolver.update(membersContentProvider, memberData, where, null);
+            contentResolver.update(GroupsContentProvider.MEMBERS_PROVIDER_URI, memberData, where, null);
         }
 
         //update the groups to indicate the list has been updated.
         ContentValues groupData = new ContentValues();
         groupData.put(GroupsContract.GroupsInfo.IS_SHOWN, 0);
         String groupCondiction = GroupsContract.GroupsInfo.GROUP_ID + "=" + groupSelected;
-        contentResolver.update(groupsContentProvider, groupData, groupCondiction, null);
+        contentResolver.update(GroupsContentProvider.GROUPS_PROVIDER_URI, groupData, groupCondiction, null);
 
         //after updation is done, do the back button pressing event.
         ((MainActivity) this.getActivity()).swapFragment(new GroupListFragment());
@@ -181,11 +188,9 @@ public class MembersListFragment
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri groupsContentProvider = Uri.parse("content://" + GroupsContentProvider.PROVIDER_URI);
-        groupsContentProvider = Uri.withAppendedPath(groupsContentProvider, MembersContract.MemberInfo.TABLE_NAME);
 
         String SELECTION = MembersContract.MemberInfo.GROUP_ID + "=" + args.getLong("GROUP_SELECTED");
-        return new CursorLoader(getActivity(), groupsContentProvider,
+        return new CursorLoader(getActivity(), GroupsContentProvider.MEMBERS_PROVIDER_URI,
                 new String[]{
                         MembersContract.MemberInfo._ID,
                         MembersContract.MemberInfo.MEMBER_ID,
@@ -239,9 +244,6 @@ public class MembersListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         membersAdapter.swapCursor(data);
-
-        //save the cursor for later retrieval of data.
-        AppState.status.membersList = data;
     }
 
     /**
@@ -254,68 +256,6 @@ public class MembersListFragment
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         membersAdapter.swapCursor(null);
-
-        //Set the cursor as null to avert accidental saving.
-        AppState.status.membersList = null;
-    }
-
-    /**
-     * This method is called to notify you that, within <code>s</code>,
-     * the <code>count</code> characters beginning at <code>start</code>
-     * are about to be replaced by new text with length <code>after</code>.
-     * It is an error to attempt to make changes to <code>s</code> from
-     * this callback.
-     *
-     * @param s
-     * @param start
-     * @param count
-     * @param after
-     */
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        updateCashCollected((Editable) s, false);
-    }
-
-    /**
-     * This method is called to notify you that, within <code>s</code>,
-     * the <code>count</code> characters beginning at <code>start</code>
-     * have just replaced old text that had length <code>before</code>.
-     * It is an error to attempt to make changes to <code>s</code> from
-     * this callback.
-     *
-     * @param s
-     * @param start
-     * @param before
-     * @param count
-     */
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-    }
-
-    /**
-     * Update the cash balances in total field. also add values
-     * to arraylist for later updates.
-     * ------------------------------------------------------------
-     * This method is called to notify you that, somewhere within
-     * <code>cashCollected</code>, the text has been changed.
-     * It is legitimate to make further changes to <code>cashCollected</code> from
-     * this callback, but be careful not to get yourself into an infinite
-     * loop, because any changes you make will cause this method to be
-     * called again recursively.
-     * (You are not told where the change took place because other
-     * afterTextChanged() methods may already have made other changes
-     * and invalidated the offsets.  But if you need to know here,
-     * you can use {@link Spannable#setSpan} in {@link #onTextChanged}
-     * to mark your place and then look up from here where the span
-     * ended up.
-     *
-     * @param cashCollected
-     */
-    @Override
-    public void afterTextChanged(Editable cashCollected) {
-        // The cash collected
-        updateCashCollected(cashCollected, true);
     }
 
     /**
@@ -338,21 +278,6 @@ public class MembersListFragment
     }
 
     /**
-     * Called when a view has been clicked.
-     *
-     * @param v The view that was clicked.
-     */
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btnSaveCollection:
-                saveCashCollection();
-                break;
-        }
-
-    }
-
-    /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
@@ -367,4 +292,81 @@ public class MembersListFragment
         public void onFragmentInteraction(Uri uri);
     }
 
+    private class CashCollectionWatcher implements TextWatcher {
+        /**
+         * This method is called to notify you that, within <code>s</code>,
+         * the <code>count</code> characters beginning at <code>start</code>
+         * are about to be replaced by new text with length <code>after</code>.
+         * It is an error to attempt to make changes to <code>s</code> from
+         * this callback.
+         *
+         * @param s
+         * @param start
+         * @param count
+         * @param after
+         */
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            updateCashCollected((Editable) s, false);
+        }
+
+        /**
+         * This method is called to notify you that, within <code>s</code>,
+         * the <code>count</code> characters beginning at <code>start</code>
+         * have just replaced old text that had length <code>before</code>.
+         * It is an error to attempt to make changes to <code>s</code> from
+         * this callback.
+         *
+         * @param s
+         * @param start
+         * @param before
+         * @param count
+         */
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        /**
+         * Update the cash balances in total field.
+         * ------------------------------------------------------------
+         * This method is called to notify you that, somewhere within
+         * <code>cashCollected</code>, the text has been changed.
+         * It is legitimate to make further changes to <code>cashCollected</code> from
+         * this callback, but be careful not to get yourself into an infinite
+         * loop, because any changes you make will cause this method to be
+         * called again recursively.
+         * (You are not told where the change took place because other
+         * afterTextChanged() methods may already have made other changes
+         * and invalidated the offsets.  But if you need to know here,
+         * you can use {@link Spannable#setSpan} in {@link #onTextChanged}
+         * to mark your place and then look up from here where the span
+         * ended up.
+         *
+         * @param cashCollected
+         */
+        @Override
+        public void afterTextChanged(Editable cashCollected) {
+            // The cash collected
+            updateCashCollected(cashCollected, true);
+        }
+    }
+
+    private class SaveCollectionListener implements View.OnClickListener {
+        /**
+         * If the save button was pressed then the saving method is called.
+         * Called when a view has been clicked.
+         *
+         * @param v The view that was clicked.
+         */
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.btnSaveCollection:
+                    saveCashCollection();
+                    break;
+            }
+
+        }
+    }
 }

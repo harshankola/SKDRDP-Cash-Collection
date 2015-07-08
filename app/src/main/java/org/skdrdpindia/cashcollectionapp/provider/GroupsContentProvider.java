@@ -13,6 +13,16 @@ public class GroupsContentProvider extends ContentProvider {
 
     //Authority of URI, URL to provider
     public static final String PROVIDER_URI = "org.skdrdpindia.cashcollectonapp.provider";
+    public static final Uri GROUPS_PROVIDER_URI = Uri.parse(
+            "content://"
+                    + GroupsContentProvider.PROVIDER_URI
+                    + "/"
+                    + GroupsContract.GroupsInfo.TABLE_NAME);
+    public static final Uri MEMBERS_PROVIDER_URI = Uri.parse(
+            "content://"
+                    + GroupsContentProvider.PROVIDER_URI
+                    + "/"
+                    + MembersContract.MemberInfo.TABLE_NAME);
 
     //Reference to database helper.
     private GroupsDbHelper groupsDb;

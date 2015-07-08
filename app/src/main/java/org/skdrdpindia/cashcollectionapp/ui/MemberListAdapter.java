@@ -116,7 +116,11 @@ public class MemberListAdapter extends SimpleCursorAdapter
             //Set the text
             setEditableText((EditText) view, ((EditText) view).getText().toString());
             //Attach a listener
-            ((EditText) view).addTextChangedListener(MembersListFragment.getInstance());
+            ((EditText) view).addTextChangedListener(
+                    MembersListFragment
+                            .getInstance()
+                            .getCollectionWatcher()
+            );
             return true;
         } else if (view instanceof CheckBox) {
             // Set whether its checked or not.

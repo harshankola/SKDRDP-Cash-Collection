@@ -1,8 +1,6 @@
 package org.skdrdpindia.cashcollectionapp.ui;
 
-import android.app.FragmentTransaction;
 import android.database.Cursor;
-import android.widget.ListView;
 
 /**
  * Created by harsh on 6/8/2015.
@@ -26,7 +24,6 @@ public final class AppState {
         public static boolean isDataUploaded = false;           // status of successful upload to computer
         public static Cursor membersList = null;
         public static Cursor groupsList = null;
-        public static FragmentTransaction fragmentChanger;
     }
 
 }

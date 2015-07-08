@@ -1,6 +1,7 @@
 package org.skdrdpindia.cashcollectionapp.ui;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -9,18 +10,31 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.skdrdpindia.cashcollectionapp.R;
+import org.skdrdpindia.cashcollectionapp.provider.GroupsContentProvider;
+import org.skdrdpindia.cashcollectionapp.provider.GroupsContract;
+import org.skdrdpindia.cashcollectionapp.provider.MembersContract;
 
 
 public class MainActivity extends ActionBarActivity
         implements GroupListFragment.OnFragmentInteractionListener,
         MembersListFragment.OnFragmentInteractionListener {
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        AppState.status.isGroupsDatabaseInflated = getContentResolver()
+                .query(
+                        GroupsContentProvider.GROUPS_PROVIDER_URI,
+                        new String[]{GroupsContract.GroupsInfo.GROUP_ID},
+                        null, null, null)
+                .getCount() == 0;
+        AppState.status.isCashDatabaseInflated = getContentResolver()
+                .query(
+                        GroupsContentProvider.MEMBERS_PROVIDER_URI,
+                        new String[]{MembersContract.MemberInfo.MEMBER_ID},
+                        null, null, null)
+                .getCount() == 0;
     }
 
 
@@ -64,9 +78,9 @@ public class MainActivity extends ActionBarActivity
     }
 
     public void swapFragment(Fragment fragment) {
-        AppState.status.fragmentChanger = getFragmentManager().beginTransaction();
-        AppState.status.fragmentChanger.replace(R.id.fragment, fragment);
-        AppState.status.fragmentChanger.commit();
+        FragmentTransaction fragmentChanger = getFragmentManager().beginTransaction();
+        fragmentChanger.replace(R.id.fragment, fragment);
+        fragmentChanger.commit();
     }
 
     @Override

@@ -180,11 +180,9 @@ public class GroupListFragment extends Fragment
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri groupsContentProvider = Uri.parse("content://" + GroupsContentProvider.PROVIDER_URI);
-        groupsContentProvider = Uri.withAppendedPath(groupsContentProvider, GroupsContract.GroupsInfo.TABLE_NAME);
 
         String SELECTION = GroupsContract.GroupsInfo.IS_SHOWN + "=1";
-        return new CursorLoader(getActivity(), groupsContentProvider,
+        return new CursorLoader(getActivity(), GroupsContentProvider.GROUPS_PROVIDER_URI,
                 new String[]{
                         GroupsContract.GroupsInfo._ID,
                         GroupsContract.GroupsInfo.GROUP_ID,
@@ -235,7 +233,6 @@ public class GroupListFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         groupsAdapter.swapCursor(data);
-        AppState.status.groupsList = data;
     }
 
     /**
@@ -248,7 +245,6 @@ public class GroupListFragment extends Fragment
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         groupsAdapter.swapCursor(null);
-        AppState.status.groupsList = null;
     }
 
     /**
