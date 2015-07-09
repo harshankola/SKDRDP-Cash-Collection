@@ -169,11 +169,9 @@ public class GroupsContentProvider extends ContentProvider {
     public boolean onCreate() {
         // setup the database helper object.
         groupsDbHelper = new GroupsDbHelper(getContext());
-        Log.d("Groups Provider", "Created Groups Helper" + groupsDbHelper.toString());
+        Log.d("Groups Provider", "Created Groups Helper: " + groupsDbHelper.toString());
         membersDbHelper = new MembersDbHelper(getContext());
-        Log.d("Groups Provider", "Created Members Helper" + membersDbHelper.toString());
-        groupsDbHelper.onUpgrade(groupsDbHelper.getWritableDatabase(), 1, 1);
-        membersDbHelper.onUpgrade(groupsDbHelper.getWritableDatabase(), 1, 1);
+        Log.d("Groups Provider", "Created Members Helper: " + membersDbHelper.toString());
         return true;
     }
 

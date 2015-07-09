@@ -34,7 +34,7 @@ public class MembersDbHelper extends SQLiteOpenHelper {
     static final String MEMBERS_DB_DELETE_QUERY =
             "DROP TABLE IF EXISTS " + MEMBERS_DB_NAME + "." + GroupsContract.MemberInfo.TABLE_NAME;
     static final String MEMBERS_DB_CREATE_QUERY =
-            "CREATE TABLE" + MEMBERS_DB_NAME + "." + GroupsContract.MemberInfo.TABLE_NAME + " ("
+            "CREATE TABLE IF NOT EXISTS " + MEMBERS_DB_NAME + "." + GroupsContract.MemberInfo.TABLE_NAME + " ("
                     + GroupsContract.MemberInfo._ID + " INTEGER PRIMARY KEY" + MembersDbHelper.COMMA_SEP
                     + GroupsContract.MemberInfo.GROUP_ID + NUMBER_TYPE + MembersDbHelper.COMMA_SEP
                     + GroupsContract.MemberInfo.MEMBER_ID + NUMBER_TYPE + MembersDbHelper.COMMA_SEP
@@ -56,9 +56,9 @@ public class MembersDbHelper extends SQLiteOpenHelper {
             db.execSQL(MEMBERS_DB_DELETE_QUERY);
             Log.d("Members DB Helper", "Deleted: " + MEMBERS_DB_DELETE_QUERY);
             db.execSQL(MEMBERS_DB_CREATE_QUERY);
-            Log.d("Members DB Helper", "Created: " + MEMBERS_DB_DELETE_QUERY);
+            Log.d("Members DB Helper", "Created: " + MEMBERS_DB_CREATE_QUERY);
         } catch (SQLException e) {
-            Log.e("SKDRDP DB", "Error opening group DB");
+            Log.e("SKDRDP DB", "Error opening member DB" + MEMBERS_DB_DELETE_QUERY);
         }
 
     }
@@ -89,7 +89,7 @@ public class MembersDbHelper extends SQLiteOpenHelper {
             db.execSQL(MEMBERS_DB_DELETE_QUERY);
             Log.d("Groups DB Helper", "Groups DB cleared.");
         } catch (SQLException e) {
-            Log.e("SKDRDP DB", "Error dropping the table.");
+            Log.e("SKDRDP DB", "Error dropping the table. " + MEMBERS_DB_DELETE_QUERY);
         }
         onCreate(db);
     }
