@@ -53,12 +53,15 @@ public class GroupsContentProvider extends ContentProvider {
         // Implement this to handle requests to delete one or more rows.
         int rowsDeleted = 0;
         SQLiteDatabase db;
+        Log.d("Groups Provider", "Delete method:selection:" + selection + " Uri:" + uri.toString());
 
         switch (dbUriMatcher.match(uri)) {
             case GROUPS_TABLE:
                 db = groupsDbHelper.getWritableDatabase();
                 rowsDeleted = db.delete(GroupsContract.GroupsInfo.TABLE_NAME,
                         selection, selectionArgs);
+                Log.d("Groups Provider", "Groups Updating Table: " + selection);
+                Log.d("Groups Provider", "Member Updated Row: rows updated is " + rowsDeleted);
                 break;
             case GROUPS_ROW:
                 db = groupsDbHelper.getWritableDatabase();
@@ -71,12 +74,18 @@ public class GroupsContentProvider extends ContentProvider {
                     rowsDeleted = db.delete(GroupsContract.GroupsInfo.TABLE_NAME,
                             GroupsContract.GroupsInfo.GROUP_ID + "=" + id
                                     + " and " + selection, selectionArgs);
+                    Log.d("Groups Provider", "Groups selection criteria"
+                            + GroupsContract.GroupsInfo.GROUP_ID + "=" + id
+                            + " and " + selection);
                 }
+                Log.d("Groups Provider", "Groups Updating Row: rows updated is " + rowsDeleted);
                 break;
             case MEMBERS_TABLE:
                 db = membersDbHelper.getWritableDatabase();
                 rowsDeleted = db.delete(GroupsContract.MemberInfo.TABLE_NAME,
                         selection, selectionArgs);
+                Log.d("Groups Provider", "Member Updating Table: " + selection);
+                Log.d("Groups Provider", "Member Updated Row: rows updated is " + rowsDeleted);
                 break;
             case MEMBERS_ROW:
                 db = membersDbHelper.getWritableDatabase();
@@ -89,7 +98,11 @@ public class GroupsContentProvider extends ContentProvider {
                     rowsDeleted = db.delete(GroupsContract.MemberInfo.TABLE_NAME,
                             GroupsContract.MemberInfo.MEMBER_ID + "=" + id
                                     + " and " + selection, selectionArgs);
+                    Log.d("Groups Provider", "Groups selection criteria"
+                            + GroupsContract.GroupsInfo.GROUP_ID + "=" + id
+                            + " and " + selection);
                 }
+                Log.d("Groups Provider", "Member Updating Row: rows updated is " + rowsDeleted);
                 break;
             default: throw new IllegalArgumentException("Invalid URI"+uri);
         }
@@ -129,14 +142,16 @@ public class GroupsContentProvider extends ContentProvider {
         switch (uriType){
             case GROUPS_TABLE:
                 if (!AppState.status.isGroupsDatabaseInflated) {
-                    Log.d("Groups Provider", "Inserting into groups table if not infalted." + AppState.status.isGroupsDatabaseInflated);
+                    Log.d("Groups Provider", "Inserting into groups table if not infalted."
+                            + AppState.status.isGroupsDatabaseInflated);
                     db = groupsDbHelper.getWritableDatabase();
                     id = db.insert(GroupsContract.GroupsInfo.TABLE_NAME, null, values);
                 }
                 break;
             case MEMBERS_TABLE:
                 if (!AppState.status.isCashDatabaseInflated) {
-                    Log.d("Groups Provider", "Inserting into members table if not infalted." + AppState.status.isCashDatabaseInflated);
+                    Log.d("Groups Provider", "Inserting into members table if not infalted."
+                            + AppState.status.isCashDatabaseInflated);
                     db = membersDbHelper.getWritableDatabase();
                     id = db.insert(GroupsContract.MemberInfo.TABLE_NAME, null, values);
                 }
@@ -211,7 +226,7 @@ public class GroupsContentProvider extends ContentProvider {
                 selectionArgs,null,null,sortOrder);
         //Notify all the listeners.
         resultData.setNotificationUri(getContext().getContentResolver(),uri);
-        Log.d("Groups Provider", "Results in cursor is:" + resultData.getCount());
+        Log.d("Groups Provider", "Results in cursor is: " + resultData.getCount());
 
         return resultData;
     }
@@ -222,13 +237,15 @@ public class GroupsContentProvider extends ContentProvider {
         // TODO: Implement this to handle requests to update one or more rows.
         int rowsUpdated = 0;
         SQLiteDatabase db;
+        Log.d("Groups Provider", "Update method:selection:" + selection + " Uri:" + uri.toString());
 
         switch (dbUriMatcher.match(uri)) {
             case GROUPS_TABLE:
                 db = groupsDbHelper.getWritableDatabase();
                 rowsUpdated = db.update(GroupsContract.GroupsInfo.TABLE_NAME, values,
                         selection, selectionArgs);
-
+                Log.d("Groups Provider", "Groups Updating Table: " + selection);
+                Log.d("Groups Provider", "Member Updated Row: rows updated is " + rowsUpdated);
                 break;
             case GROUPS_ROW:
                 db = groupsDbHelper.getWritableDatabase();
@@ -241,12 +258,18 @@ public class GroupsContentProvider extends ContentProvider {
                     rowsUpdated = db.update(GroupsContract.GroupsInfo.TABLE_NAME, values,
                             GroupsContract.GroupsInfo.GROUP_ID + "=" + id
                                     + " and " + selection, selectionArgs);
+                    Log.d("Groups Provider", "Groups selection criteria"
+                            + GroupsContract.GroupsInfo.GROUP_ID + "=" + id
+                            + " and " + selection);
                 }
+                Log.d("Groups Provider", "Groups Updating Row: rows updated is " + rowsUpdated);
                 break;
             case MEMBERS_TABLE:
                 db = membersDbHelper.getWritableDatabase();
                 rowsUpdated = db.update(GroupsContract.MemberInfo.TABLE_NAME, values,
                         selection, selectionArgs);
+                Log.d("Groups Provider", "Member Updating Table: " + selection);
+                Log.d("Groups Provider", "Member Updated Row: rows updated is " + rowsUpdated);
                 break;
             case MEMBERS_ROW:
                 db = membersDbHelper.getWritableDatabase();
@@ -259,9 +282,14 @@ public class GroupsContentProvider extends ContentProvider {
                     rowsUpdated = db.update(GroupsContract.MemberInfo.TABLE_NAME, values,
                             GroupsContract.MemberInfo.MEMBER_ID + "=" + id
                                     + " and " + selection, selectionArgs);
+                    Log.d("Groups Provider", "Groups selection criteria"
+                            + GroupsContract.MemberInfo.MEMBER_ID + "=" + id
+                            + " and " + selection);
                 }
+                Log.d("Groups Provider", "Member Updating Row: rows updated is " + rowsUpdated);
                 break;
-            default: throw new IllegalArgumentException("Invalid URI"+uri);
+            default:
+                throw new IllegalArgumentException("Invalid URI " + uri);
         }
 
         //Notify Listeners

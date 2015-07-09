@@ -32,7 +32,7 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
     private static final String NUMBER_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
     private static final String GROUP_DB_CREATE_QUERY =
-            "CREATE TABLE IF NOT EXISTS " + GROUPS_DB_NAME + "." + GroupsContract.GroupsInfo.TABLE_NAME + " ("
+            "CREATE TABLE" + GROUPS_DB_NAME + "." + GroupsContract.GroupsInfo.TABLE_NAME + " ("
                     + GroupsContract.GroupsInfo._ID + " INTEGER PRIMARY KEY" + COMMA_SEP
                     + GroupsContract.GroupsInfo.GROUP_ID + NUMBER_TYPE + COMMA_SEP
                     + GroupsContract.GroupsInfo.GROUP_NAME + TEXT_TYPE + COMMA_SEP
@@ -53,9 +53,9 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         try {
             db.execSQL(GROUP_DB_DELETE_QUERY);
-            Log.d("Groups DB Helper", "Deleted:" + GROUP_DB_DELETE_QUERY);
+            Log.d("Groups DB Helper", "Deleted: " + GROUP_DB_DELETE_QUERY);
             db.execSQL(GROUP_DB_CREATE_QUERY);
-            Log.d("Groups DB Helper", "Created:" + GROUP_DB_CREATE_QUERY);
+            Log.d("Groups DB Helper", "Created: " + GROUP_DB_CREATE_QUERY);
         } catch (SQLException e) {
             Log.e("SKDRDP DB", "Error opening group DB");
         }

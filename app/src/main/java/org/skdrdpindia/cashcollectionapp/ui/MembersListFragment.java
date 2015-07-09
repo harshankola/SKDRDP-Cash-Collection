@@ -145,6 +145,8 @@ public class MembersListFragment
 
         // Get access to database.
         ContentResolver contentResolver = getActivity().getContentResolver();
+        Uri membersProviderUri = GroupsContentProvider.MEMBERS_PROVIDER_URI;
+
 
         //update each member separately.
         Cursor memberList = membersAdapter.getCursor();
@@ -167,21 +169,19 @@ public class MembersListFragment
             memberData.put(GroupsContract.MemberInfo.INSTALLMENT, membersCollection[0]);
             memberData.put(GroupsContract.MemberInfo.SAVINGS, membersCollection[1]);
             memberData.put(GroupsContract.MemberInfo.IS_PRESENT, presence ? 1 : 0);
-            String where = GroupsContract.MemberInfo.MEMBER_ID
-                    + "="
-                    + memberID
-                    + " and "
-                    + GroupsContract.GroupsInfo.GROUP_ID
+            membersProviderUri = Uri.withAppendedPath(membersProviderUri, Long.toString(memberID));
+            String where = GroupsContract.GroupsInfo.GROUP_ID
                     + "="
                     + groupSelected;
-            contentResolver.update(GroupsContentProvider.MEMBERS_PROVIDER_URI, memberData, where, null);
+            contentResolver.update(membersProviderUri, memberData, where, null);
         }
 
         //update the groups to indicate the list has been updated.
         ContentValues groupData = new ContentValues();
         groupData.put(GroupsContract.GroupsInfo.IS_SHOWN, 0);
-        String groupCondiction = GroupsContract.GroupsInfo.GROUP_ID + "=" + groupSelected;
-        contentResolver.update(GroupsContentProvider.GROUPS_PROVIDER_URI, groupData, groupCondiction, null);
+        Uri groupsProviderUri = GroupsContentProvider.GROUPS_PROVIDER_URI;
+        groupsProviderUri = Uri.withAppendedPath(groupsProviderUri, Long.toString(groupSelected));
+        contentResolver.update(groupsProviderUri, groupData, null, null);
 
         //after updation is done, do the back button pressing event.
         ((MainActivity) this.getActivity()).swapFragment(new GroupListFragment());
@@ -198,7 +198,7 @@ public class MembersListFragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
         String SELECTION = GroupsContract.MemberInfo.GROUP_ID + "=" + groupSelected;
-        Log.d("SKDRDP Member Frag", "Members from group " + groupSelected);
+        Log.d("Member Frag", "Displaying Members from group " + groupSelected);
         return new CursorLoader(getActivity(), GroupsContentProvider.MEMBERS_PROVIDER_URI,
                 new String[]{
                         GroupsContract.MemberInfo._ID,
@@ -253,7 +253,7 @@ public class MembersListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         membersAdapter.swapCursor(data);
-        Log.d("Mem Cursor", "Items in cursor=" + data.getCount());
+        Log.d("Mem Cursor", "Members in cursor=" + data.getCount());
     }
 
     /**
@@ -273,18 +273,13 @@ public class MembersListFragment
      * is made in text view. Store the value in arraylist.
      *
      * @param cashCollected
-     * @param toIncrement
      */
-    private void updateCashCollected(Editable cashCollected, boolean toIncrement) {
+    private void updateCashCollected(Editable cashCollected) {
         TextView txtTotalCollection = (TextView) getActivity().findViewById(R.id.txtTotalCollection);
         if (!cashCollected
                 .toString()
                 .isEmpty()) {
-            if (!toIncrement) {
-                totalSum -= Integer.parseInt(cashCollected.toString());
-            } else {
-                totalSum += Integer.parseInt(cashCollected.toString());
-            }
+            totalSum += Integer.parseInt(cashCollected.toString());
         }
 
         txtTotalCollection.setText(totalSum + " Rupees");
@@ -320,7 +315,7 @@ public class MembersListFragment
          */
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            updateCashCollected((Editable) s, false);
+
         }
 
         /**
@@ -361,7 +356,7 @@ public class MembersListFragment
         @Override
         public void afterTextChanged(Editable cashCollected) {
             // The cash collected
-            updateCashCollected(cashCollected, true);
+            updateCashCollected(cashCollected);
         }
     }
 
