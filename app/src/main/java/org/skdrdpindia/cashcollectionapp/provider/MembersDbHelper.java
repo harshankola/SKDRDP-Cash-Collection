@@ -7,14 +7,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 /**
- * Groups Table Housed in its own database.
+ * Members Table housed in its own database.
  * Created by harsh on 6/1/2015.
  */
-public class GroupsDbHelper extends SQLiteOpenHelper {
-    static final String GROUPS_DB_NAME = "GroupsDb";
+public class MembersDbHelper extends SQLiteOpenHelper {
+    static final String MEMBERS_DB_NAME = "MembersDb";
     private static final int DB_VERSION = 1;
 
-    
+
     /**
      * Create a helper object to create, open, and/or manage a database.
      * This method always returns very quickly.  The database is not actually
@@ -23,25 +23,26 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
      *
      * @param context to use to open or create the database
      */
-    public GroupsDbHelper(Context context) {
-        super(context, GROUPS_DB_NAME, null, DB_VERSION);
+    public MembersDbHelper(Context context) {
+        super(context, MEMBERS_DB_NAME, null, DB_VERSION);
     }
 
     // Query Strings
     private static final String TEXT_TYPE = " TEXT";
     private static final String NUMBER_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
-    private static final String GROUP_DB_CREATE_QUERY =
-            "CREATE TABLE IF NOT EXISTS " + GROUPS_DB_NAME + "." + GroupsContract.GroupsInfo.TABLE_NAME + " ("
-                    + GroupsContract.GroupsInfo._ID + " INTEGER PRIMARY KEY" + COMMA_SEP
-                    + GroupsContract.GroupsInfo.GROUP_ID + NUMBER_TYPE + COMMA_SEP
-                    + GroupsContract.GroupsInfo.GROUP_NAME + TEXT_TYPE + COMMA_SEP
-                    + GroupsContract.GroupsInfo.MOBILE_1 + TEXT_TYPE + COMMA_SEP
-                    + GroupsContract.GroupsInfo.MOBILE_2 + TEXT_TYPE + COMMA_SEP
-                    + GroupsContract.GroupsInfo.MOBILE_3 + TEXT_TYPE + COMMA_SEP
-                    + GroupsContract.GroupsInfo.IS_SHOWN + NUMBER_TYPE + " )";
-    private static final String GROUP_DB_DELETE_QUERY =
-            "DROP TABLE IF EXISTS " + GROUPS_DB_NAME + "." + GroupsContract.GroupsInfo.TABLE_NAME;
+    static final String MEMBERS_DB_DELETE_QUERY =
+            "DROP TABLE IF EXISTS " + MEMBERS_DB_NAME + "." + GroupsContract.MemberInfo.TABLE_NAME;
+    static final String MEMBERS_DB_CREATE_QUERY =
+            "CREATE TABLE IF NOT EXISTS " + MEMBERS_DB_NAME + "." + GroupsContract.MemberInfo.TABLE_NAME + " ("
+                    + GroupsContract.MemberInfo._ID + " INTEGER PRIMARY KEY" + MembersDbHelper.COMMA_SEP
+                    + GroupsContract.MemberInfo.GROUP_ID + NUMBER_TYPE + MembersDbHelper.COMMA_SEP
+                    + GroupsContract.MemberInfo.MEMBER_ID + NUMBER_TYPE + MembersDbHelper.COMMA_SEP
+                    + GroupsContract.MemberInfo.MEMBER_NAME + MembersDbHelper.TEXT_TYPE + MembersDbHelper.COMMA_SEP
+                    + GroupsContract.MemberInfo.INSTALLMENT + NUMBER_TYPE + MembersDbHelper.COMMA_SEP
+                    + GroupsContract.MemberInfo.SAVINGS + NUMBER_TYPE + MembersDbHelper.COMMA_SEP
+                    + GroupsContract.MemberInfo.IS_PRESENT + NUMBER_TYPE + " )";
+
 
     /**
      * Called when the database is created for the first time. This is where the
@@ -52,10 +53,10 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
-            db.execSQL(GROUP_DB_DELETE_QUERY);
-            Log.d("Groups DB Helper", "Deleted:" + GROUP_DB_DELETE_QUERY);
-            db.execSQL(GROUP_DB_CREATE_QUERY);
-            Log.d("Groups DB Helper", "Created:" + GROUP_DB_CREATE_QUERY);
+            db.execSQL(MEMBERS_DB_DELETE_QUERY);
+            Log.d("Groups DB Helper", "Deleted:" + MEMBERS_DB_DELETE_QUERY);
+            db.execSQL(MEMBERS_DB_CREATE_QUERY);
+            Log.d("Groups DB Helper", "Created:" + MEMBERS_DB_DELETE_QUERY);
         } catch (SQLException e) {
             Log.e("SKDRDP DB", "Error opening group DB");
         }
@@ -85,7 +86,7 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
-            db.execSQL(GROUP_DB_DELETE_QUERY);
+            db.execSQL(MEMBERS_DB_DELETE_QUERY);
             Log.d("Groups DB Helper", "Groups DB cleared.");
         } catch (SQLException e) {
             Log.e("SKDRDP DB", "Error dropping the table.");

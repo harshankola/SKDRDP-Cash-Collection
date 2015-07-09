@@ -29,6 +29,7 @@ public class GroupsContentProvider extends ContentProvider {
 
     //Reference to database helper.
     private GroupsDbHelper groupsDbHelper;
+    private MembersDbHelper membersDbHelper;
 
     //URI Matcher and constants to match
     private static final UriMatcher dbUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -73,12 +74,12 @@ public class GroupsContentProvider extends ContentProvider {
                 }
                 break;
             case MEMBERS_TABLE:
-                db = groupsDbHelper.getWritableDatabase();
+                db = membersDbHelper.getWritableDatabase();
                 rowsDeleted = db.delete(GroupsContract.MemberInfo.TABLE_NAME,
                         selection, selectionArgs);
                 break;
             case MEMBERS_ROW:
-                db = groupsDbHelper.getWritableDatabase();
+                db = membersDbHelper.getWritableDatabase();
                 id = uri.getLastPathSegment();
                 //if selection criteria is not given.
                 if (TextUtils.isEmpty(selection)) {
@@ -136,7 +137,7 @@ public class GroupsContentProvider extends ContentProvider {
             case MEMBERS_TABLE:
                 if (!AppState.status.isCashDatabaseInflated) {
                     Log.d("Groups Provider", "Inserting into members table if not infalted." + AppState.status.isCashDatabaseInflated);
-                    db = groupsDbHelper.getWritableDatabase();
+                    db = membersDbHelper.getWritableDatabase();
                     id = db.insert(GroupsContract.MemberInfo.TABLE_NAME, null, values);
                 }
                 break;
@@ -153,7 +154,10 @@ public class GroupsContentProvider extends ContentProvider {
         // setup the database helper object.
         groupsDbHelper = new GroupsDbHelper(getContext());
         Log.d("Groups Provider", "Created Groups Helper" + groupsDbHelper.toString());
+        membersDbHelper = new MembersDbHelper(getContext());
+        Log.d("Groups Provider", "Created Members Helper" + membersDbHelper.toString());
         groupsDbHelper.onUpgrade(groupsDbHelper.getWritableDatabase(), 1, 1);
+        membersDbHelper.onUpgrade(groupsDbHelper.getWritableDatabase(), 1, 1);
         return true;
     }
 
@@ -183,13 +187,13 @@ public class GroupsContentProvider extends ContentProvider {
                         + uri.getLastPathSegment());
                 break;
             case MEMBERS_TABLE:
-                db = groupsDbHelper.getWritableDatabase();
+                db = membersDbHelper.getWritableDatabase();
                 //set table name according to query.
                 dbQueryBuilder.setTables(GroupsContract.MemberInfo.TABLE_NAME);
                 Log.d("Groups Provider", "Query Member Table");
                 break;
             case MEMBERS_ROW:
-                db = groupsDbHelper.getWritableDatabase();
+                db = membersDbHelper.getWritableDatabase();
                 //set table name according to query.
                 dbQueryBuilder.setTables(GroupsContract.MemberInfo.TABLE_NAME);
                 dbQueryBuilder.appendWhere(GroupsContract.MemberInfo.MEMBER_ID + "="
@@ -240,12 +244,12 @@ public class GroupsContentProvider extends ContentProvider {
                 }
                 break;
             case MEMBERS_TABLE:
-                db = groupsDbHelper.getWritableDatabase();
+                db = membersDbHelper.getWritableDatabase();
                 rowsUpdated = db.update(GroupsContract.MemberInfo.TABLE_NAME, values,
                         selection, selectionArgs);
                 break;
             case MEMBERS_ROW:
-                db = groupsDbHelper.getWritableDatabase();
+                db = membersDbHelper.getWritableDatabase();
                 id = uri.getLastPathSegment();
                 //if selection criteria is not given.
                 if (TextUtils.isEmpty(selection)) {
