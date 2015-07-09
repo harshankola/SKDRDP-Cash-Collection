@@ -71,11 +71,12 @@ public class MemberListAdapter extends SimpleCursorAdapter
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View memberListItem = null;
+        View memberListItem;
         MemberListHolder memberListHolder;
+        Cursor cursor = getCursor();
 
         // Throw an exception if cursor doesn't have elements at given said position.
-        if (!getCursor().moveToPosition(position)) {
+        if (!cursor.moveToPosition(position)) {
             throw new IllegalStateException("couldn't move cursor to position " + position);
         }
 
@@ -88,15 +89,35 @@ public class MemberListAdapter extends SimpleCursorAdapter
             memberListHolder.edtxtSavings = (EditText) memberListItem.findViewById(R.id.edtxtSavings);
             memberListHolder.chkIsPresent = (CheckBox) memberListItem.findViewById(R.id.chkIsPresent);
             memberListItem.setTag(memberListHolder);
-            Log.d("Mem Adapter", "New view: Member ID is =" + memberListHolder.txtMemberID.getText());
-            Log.d("Mem Adapter", "row id=" + getCursor().getLong(getCursor().getColumnIndex(MembersContract.MemberInfo._ID)));
+            Log.d("Mem Adapter", "New view: Member ID is ="
+                    + cursor
+                    .getLong(
+                            cursor
+                                    .getColumnIndex(MembersContract.MemberInfo.MEMBER_ID)));
+            Log.d("Mem Adapter", "_ID id="
+                    + cursor
+                    .getLong(
+                            cursor
+                                    .getColumnIndex(MembersContract.MemberInfo._ID)));
         } else {
             memberListItem = convertView;
+            Log.d("Mem Adapter", "Old view: Member ID is ="
+                    + cursor
+                    .getLong(
+                            cursor
+                                    .getColumnIndex(MembersContract.MemberInfo.MEMBER_ID)));
         }
 
         // Initialize the member data by binding all the views with their respective data.
-        bindView(memberListItem, context, getCursor());
-        Log.d("Mem Adapter", "Member view for:" + "pos=" + position);
+        bindView(memberListItem, context, cursor);
+        Log.d("Mem Adapter", "Member binding view for:"
+                + "pos="
+                + position
+                + " _ID id="
+                + cursor
+                .getLong(
+                        cursor
+                                .getColumnIndex(MembersContract.MemberInfo._ID)));
 
         return memberListItem;
     }

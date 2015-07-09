@@ -52,7 +52,9 @@ public class MembersDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         try {
             db.execSQL(MEMBERS_DB_DELETE_QUERY);
+            Log.d("Member DB Helper", "Deleted:" + MEMBERS_DB_DELETE_QUERY);
             db.execSQL(MEMBERS_DB_CREATE_QUERY);
+            Log.d("Member DB Helper", "Created:" + MEMBERS_DB_CREATE_QUERY);
         } catch (SQLException e) {
             Log.e("SKDRDP DB","Error opening member DB");
         }
@@ -82,7 +84,12 @@ public class MembersDbHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(MEMBERS_DB_DELETE_QUERY);
+        try {
+            db.execSQL(MEMBERS_DB_DELETE_QUERY);
+            Log.d("Member DB Helper", "Members DB cleared.");
+        } catch (SQLException e) {
+            Log.e("SKDRDP DB", "Error dropping the members table");
+        }
         onCreate(db);
     }
 }

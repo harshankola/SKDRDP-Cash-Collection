@@ -5,7 +5,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Created by harsh on 6/1/2015.
@@ -53,7 +52,9 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         try {
             db.execSQL(GROUP_DB_DELETE_QUERY);
+            Log.d("Groups DB Helper", "Deleted:" + GROUP_DB_DELETE_QUERY);
             db.execSQL(GROUP_DB_CREATE_QUERY);
+            Log.d("Groups DB Helper", "Created:" + GROUP_DB_CREATE_QUERY);
         } catch (SQLException e) {
             Log.e("SKDRDP DB", "Error opening group DB");
         }
@@ -82,7 +83,12 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(GROUP_DB_DELETE_QUERY);
+        try {
+            db.execSQL(GROUP_DB_DELETE_QUERY);
+            Log.d("Groups DB Helper", "Groups DB cleared.");
+        } catch (SQLException e) {
+            Log.e("SKDRDP DB", "Error dropping the table.");
+        }
         onCreate(db);
     }
 }

@@ -10,6 +10,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,6 +89,7 @@ public class GroupListFragment extends Fragment
         ListView groupsListView;
 
         if (AppState.status.isGroupsDatabaseInflated) {
+            Log.d("Groups List View", "inside group display code.");
             // initialize the Adapter and views.
             groupsListView = (ListView) groupListFragment.findViewById(R.id.GroupListView);
             groupsAdapter = new SimpleCursorAdapter(getActivity().getApplicationContext(),

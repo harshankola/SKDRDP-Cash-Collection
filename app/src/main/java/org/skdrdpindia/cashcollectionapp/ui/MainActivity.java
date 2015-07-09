@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,13 +29,15 @@ public class MainActivity extends ActionBarActivity
                         GroupsContentProvider.GROUPS_PROVIDER_URI,
                         new String[]{GroupsContract.GroupsInfo.GROUP_ID},
                         null, null, null)
-                .getCount() == 0;
+                .getCount() > 0;
+        Log.d("Main Activity", "Group Status set to:" + AppState.status.isGroupsDatabaseInflated);
         AppState.status.isCashDatabaseInflated = getContentResolver()
                 .query(
                         GroupsContentProvider.MEMBERS_PROVIDER_URI,
                         new String[]{MembersContract.MemberInfo.MEMBER_ID},
                         null, null, null)
-                .getCount() == 0;
+                .getCount() > 0;
+        Log.d("Main Activity", "Mem Status set to:" + AppState.status.isCashDatabaseInflated);
     }
 
 

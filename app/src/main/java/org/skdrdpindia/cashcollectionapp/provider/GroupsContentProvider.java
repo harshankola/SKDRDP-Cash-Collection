@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
+
+import org.skdrdpindia.cashcollectionapp.ui.AppState;
 
 public class GroupsContentProvider extends ContentProvider {
 
@@ -125,12 +128,18 @@ public class GroupsContentProvider extends ContentProvider {
         int uriType = dbUriMatcher.match(uri);
         switch (uriType){
             case GROUPS_TABLE:
-                db = groupsDb.getWritableDatabase();
-                id = db.insert(GroupsContract.GroupsInfo.TABLE_NAME,null,values);
+                if (!AppState.status.isGroupsDatabaseInflated) {
+                    Log.d("Groups Provider", "Inserting into groups table if not infalted." + AppState.status.isGroupsDatabaseInflated);
+                    db = groupsDb.getWritableDatabase();
+                    id = db.insert(GroupsContract.GroupsInfo.TABLE_NAME, null, values);
+                }
                 break;
             case MEMBERS_TABLE:
-                db = membersDb.getWritableDatabase();
-                id = db.insert(MembersContract.MemberInfo.TABLE_NAME,null,values);
+                if (!AppState.status.isCashDatabaseInflated) {
+                    Log.d("Groups Provider", "Inserting into members table if not infalted." + AppState.status.isCashDatabaseInflated);
+                    db = membersDb.getWritableDatabase();
+                    id = db.insert(MembersContract.MemberInfo.TABLE_NAME, null, values);
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Invalid URI" + uri);
@@ -156,6 +165,7 @@ public class GroupsContentProvider extends ContentProvider {
         //Create query builder instance
         SQLiteDatabase db;
         SQLiteQueryBuilder dbQueryBuilder = new SQLiteQueryBuilder();
+        Log.d("Groups Provider", "Query method:selection:" + selection + " Uri:" + uri.toString());
 
         // find query type
         switch (dbUriMatcher.match(uri)) {
@@ -163,6 +173,7 @@ public class GroupsContentProvider extends ContentProvider {
                 db = groupsDb.getWritableDatabase();
                 //set table name according to query.
                 dbQueryBuilder.setTables(GroupsContract.GroupsInfo.TABLE_NAME);
+                Log.d("Groups Provider", "Query Group Table");
                 break;
             case GROUPS_ROW:
                 db = groupsDb.getWritableDatabase();
@@ -170,11 +181,14 @@ public class GroupsContentProvider extends ContentProvider {
                 dbQueryBuilder.setTables(GroupsContract.GroupsInfo.TABLE_NAME);
                 dbQueryBuilder.appendWhere(GroupsContract.GroupsInfo.GROUP_ID + "="
                         + uri.getLastPathSegment());//get the group based on its ID.
+                Log.d("Groups Provider", "Query Group Row:" + GroupsContract.GroupsInfo.GROUP_ID + "="
+                        + uri.getLastPathSegment());
                 break;
             case MEMBERS_TABLE:
                 db = membersDb.getWritableDatabase();
                 //set table name according to query.
                 dbQueryBuilder.setTables(MembersContract.MemberInfo.TABLE_NAME);
+                Log.d("Groups Provider", "Query Member Table");
                 break;
             case MEMBERS_ROW:
                 db = membersDb.getWritableDatabase();
@@ -182,16 +196,20 @@ public class GroupsContentProvider extends ContentProvider {
                 dbQueryBuilder.setTables(MembersContract.MemberInfo.TABLE_NAME);
                 dbQueryBuilder.appendWhere(MembersContract.MemberInfo.MEMBER_ID + "="
                         + uri.getLastPathSegment());
+                Log.d("Groups Provider", "Query Member Row:" + MembersContract.MemberInfo.MEMBER_ID + "="
+                        + uri.getLastPathSegment());
                 break;
             default:
                 throw new IllegalArgumentException("Invalid URI" + uri);
         }
 
         //get instance of the database.
+        Log.d("Groups Provider", "Querying:" + dbQueryBuilder.toString());
          Cursor resultData = dbQueryBuilder.query(db,projection,selection,
                 selectionArgs,null,null,sortOrder);
         //Notify all the listeners.
         resultData.setNotificationUri(getContext().getContentResolver(),uri);
+        Log.d("Groups Provider", "Results in cursor is:" + resultData.getCount());
 
         return resultData;
     }

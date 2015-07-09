@@ -14,10 +14,10 @@ public final class MembersContract {
 
     // Column headers for member list
     public static abstract class MemberInfo implements BaseColumns {
-        public static final String TABLE_NAME = "membersinfo";
-        public static final String MEMBER_ID = "memberid";
+        public static final String TABLE_NAME = "shgmembersinfo";
+        public static final String MEMBER_ID = "shgmemberid";
         public static final String GROUP_ID = "groupid";
-        public static final String MEMBER_NAME = "membername";
+        public static final String MEMBER_NAME = "shgmembername";
         public static final String SAVINGS = "savings";
         public static final String INSTALLMENT = "installment";
         public static final String IS_PRESENT = "present";
