@@ -12,7 +12,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import org.skdrdpindia.cashcollectionapp.R;
-import org.skdrdpindia.cashcollectionapp.provider.MembersContract;
+import org.skdrdpindia.cashcollectionapp.provider.GroupsContract;
 
 /**
  * Adapter class to do the binding of Member Data to Corresponding Views.
@@ -36,11 +36,11 @@ public class MemberListAdapter extends SimpleCursorAdapter
                 R.layout.member_list_item,
                 null,
                 new String[]{
-                        MembersContract.MemberInfo.MEMBER_ID,
-                        MembersContract.MemberInfo.MEMBER_NAME,
-                        MembersContract.MemberInfo.INSTALLMENT,
-                        MembersContract.MemberInfo.SAVINGS,
-                        MembersContract.MemberInfo.IS_PRESENT},
+                        GroupsContract.MemberInfo.MEMBER_ID,
+                        GroupsContract.MemberInfo.MEMBER_NAME,
+                        GroupsContract.MemberInfo.INSTALLMENT,
+                        GroupsContract.MemberInfo.SAVINGS,
+                        GroupsContract.MemberInfo.IS_PRESENT},
                 new int[]{
                         R.id.txtMemberId,
                         R.id.txtMemberName,
@@ -93,19 +93,19 @@ public class MemberListAdapter extends SimpleCursorAdapter
                     + cursor
                     .getLong(
                             cursor
-                                    .getColumnIndex(MembersContract.MemberInfo.MEMBER_ID)));
+                                    .getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID)));
             Log.d("Mem Adapter", "_ID id="
                     + cursor
                     .getLong(
                             cursor
-                                    .getColumnIndex(MembersContract.MemberInfo._ID)));
+                                    .getColumnIndex(GroupsContract.MemberInfo._ID)));
         } else {
             memberListItem = convertView;
             Log.d("Mem Adapter", "Old view: Member ID is ="
                     + cursor
                     .getLong(
                             cursor
-                                    .getColumnIndex(MembersContract.MemberInfo.MEMBER_ID)));
+                                    .getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID)));
         }
 
         // Initialize the member data by binding all the views with their respective data.
@@ -117,7 +117,7 @@ public class MemberListAdapter extends SimpleCursorAdapter
                 + cursor
                 .getLong(
                         cursor
-                                .getColumnIndex(MembersContract.MemberInfo._ID)));
+                                .getColumnIndex(GroupsContract.MemberInfo._ID)));
 
         return memberListItem;
     }

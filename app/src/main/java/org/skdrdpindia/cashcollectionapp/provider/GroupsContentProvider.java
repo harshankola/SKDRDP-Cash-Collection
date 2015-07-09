@@ -25,7 +25,7 @@ public class GroupsContentProvider extends ContentProvider {
             "content://"
                     + GroupsContentProvider.PROVIDER_URI
                     + "/"
-                    + MembersContract.MemberInfo.TABLE_NAME);
+                    + GroupsContract.MemberInfo.TABLE_NAME);
 
     //Reference to database helper.
     private GroupsDbHelper groupsDb;
@@ -41,8 +41,8 @@ public class GroupsContentProvider extends ContentProvider {
     static {
         dbUriMatcher.addURI(PROVIDER_URI, GroupsContract.GroupsInfo.TABLE_NAME, GROUPS_TABLE);
         dbUriMatcher.addURI(PROVIDER_URI, GroupsContract.GroupsInfo.TABLE_NAME + "/#", GROUPS_ROW);
-        dbUriMatcher.addURI(PROVIDER_URI, MembersContract.MemberInfo.TABLE_NAME, MEMBERS_TABLE);
-        dbUriMatcher.addURI(PROVIDER_URI, MembersContract.MemberInfo.TABLE_NAME + "/#", MEMBERS_ROW);
+        dbUriMatcher.addURI(PROVIDER_URI, GroupsContract.MemberInfo.TABLE_NAME, MEMBERS_TABLE);
+        dbUriMatcher.addURI(PROVIDER_URI, GroupsContract.MemberInfo.TABLE_NAME + "/#", MEMBERS_ROW);
     }
 
     public GroupsContentProvider() {
@@ -75,7 +75,7 @@ public class GroupsContentProvider extends ContentProvider {
                 break;
             case MEMBERS_TABLE:
                 db = membersDb.getWritableDatabase();
-                rowsDeleted = db.delete(MembersContract.MemberInfo.TABLE_NAME,
+                rowsDeleted = db.delete(GroupsContract.MemberInfo.TABLE_NAME,
                         selection, selectionArgs);
                 break;
             case MEMBERS_ROW:
@@ -83,11 +83,11 @@ public class GroupsContentProvider extends ContentProvider {
                 id = uri.getLastPathSegment();
                 //if selection criteria is not given.
                 if (TextUtils.isEmpty(selection)) {
-                    rowsDeleted = db.delete(MembersContract.MemberInfo.TABLE_NAME,
-                            MembersContract.MemberInfo.MEMBER_ID + "=" + id, null);
+                    rowsDeleted = db.delete(GroupsContract.MemberInfo.TABLE_NAME,
+                            GroupsContract.MemberInfo.MEMBER_ID + "=" + id, null);
                 } else {
-                    rowsDeleted = db.delete(MembersContract.MemberInfo.TABLE_NAME,
-                            MembersContract.MemberInfo.MEMBER_ID + "=" + id
+                    rowsDeleted = db.delete(GroupsContract.MemberInfo.TABLE_NAME,
+                            GroupsContract.MemberInfo.MEMBER_ID + "=" + id
                                     + " and " + selection, selectionArgs);
                 }
                 break;
@@ -110,11 +110,11 @@ public class GroupsContentProvider extends ContentProvider {
             case GROUPS_TABLE:
                 return  tableType + GroupsContract.GroupsInfo.TABLE_NAME;
             case MEMBERS_TABLE:
-                return tableType + MembersContract.MemberInfo.TABLE_NAME;
+                return tableType + GroupsContract.MemberInfo.TABLE_NAME;
             case GROUPS_ROW:
                 return itemType + GroupsContract.GroupsInfo.TABLE_NAME;
             case MEMBERS_ROW:
-                return itemType + MembersContract.MemberInfo.TABLE_NAME;
+                return itemType + GroupsContract.MemberInfo.TABLE_NAME;
             default:
                 throw new IllegalArgumentException("Invalid URI" + uri);
         }
@@ -138,7 +138,7 @@ public class GroupsContentProvider extends ContentProvider {
                 if (!AppState.status.isCashDatabaseInflated) {
                     Log.d("Groups Provider", "Inserting into members table if not infalted." + AppState.status.isCashDatabaseInflated);
                     db = membersDb.getWritableDatabase();
-                    id = db.insert(MembersContract.MemberInfo.TABLE_NAME, null, values);
+                    id = db.insert(GroupsContract.MemberInfo.TABLE_NAME, null, values);
                 }
                 break;
             default:
@@ -187,16 +187,16 @@ public class GroupsContentProvider extends ContentProvider {
             case MEMBERS_TABLE:
                 db = membersDb.getWritableDatabase();
                 //set table name according to query.
-                dbQueryBuilder.setTables(MembersContract.MemberInfo.TABLE_NAME);
+                dbQueryBuilder.setTables(GroupsContract.MemberInfo.TABLE_NAME);
                 Log.d("Groups Provider", "Query Member Table");
                 break;
             case MEMBERS_ROW:
                 db = membersDb.getWritableDatabase();
                 //set table name according to query.
-                dbQueryBuilder.setTables(MembersContract.MemberInfo.TABLE_NAME);
-                dbQueryBuilder.appendWhere(MembersContract.MemberInfo.MEMBER_ID + "="
+                dbQueryBuilder.setTables(GroupsContract.MemberInfo.TABLE_NAME);
+                dbQueryBuilder.appendWhere(GroupsContract.MemberInfo.MEMBER_ID + "="
                         + uri.getLastPathSegment());
-                Log.d("Groups Provider", "Query Member Row:" + MembersContract.MemberInfo.MEMBER_ID + "="
+                Log.d("Groups Provider", "Query Member Row:" + GroupsContract.MemberInfo.MEMBER_ID + "="
                         + uri.getLastPathSegment());
                 break;
             default:
@@ -243,7 +243,7 @@ public class GroupsContentProvider extends ContentProvider {
                 break;
             case MEMBERS_TABLE:
                 db = membersDb.getWritableDatabase();
-                rowsUpdated = db.update(MembersContract.MemberInfo.TABLE_NAME, values,
+                rowsUpdated = db.update(GroupsContract.MemberInfo.TABLE_NAME, values,
                         selection, selectionArgs);
                 break;
             case MEMBERS_ROW:
@@ -251,11 +251,11 @@ public class GroupsContentProvider extends ContentProvider {
                 id = uri.getLastPathSegment();
                 //if selection criteria is not given.
                 if (TextUtils.isEmpty(selection)) {
-                    rowsUpdated = db.update(MembersContract.MemberInfo.TABLE_NAME, values,
-                            MembersContract.MemberInfo.MEMBER_ID + "=" + id, null);
+                    rowsUpdated = db.update(GroupsContract.MemberInfo.TABLE_NAME, values,
+                            GroupsContract.MemberInfo.MEMBER_ID + "=" + id, null);
                 } else {
-                    rowsUpdated = db.update(MembersContract.MemberInfo.TABLE_NAME, values,
-                            MembersContract.MemberInfo.MEMBER_ID + "=" + id
+                    rowsUpdated = db.update(GroupsContract.MemberInfo.TABLE_NAME, values,
+                            GroupsContract.MemberInfo.MEMBER_ID + "=" + id
                                     + " and " + selection, selectionArgs);
                 }
                 break;

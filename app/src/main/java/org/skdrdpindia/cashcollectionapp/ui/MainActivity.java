@@ -13,7 +13,6 @@ import android.view.View;
 import org.skdrdpindia.cashcollectionapp.R;
 import org.skdrdpindia.cashcollectionapp.provider.GroupsContentProvider;
 import org.skdrdpindia.cashcollectionapp.provider.GroupsContract;
-import org.skdrdpindia.cashcollectionapp.provider.MembersContract;
 
 
 public class MainActivity extends ActionBarActivity
@@ -34,7 +33,7 @@ public class MainActivity extends ActionBarActivity
         AppState.status.isCashDatabaseInflated = getContentResolver()
                 .query(
                         GroupsContentProvider.MEMBERS_PROVIDER_URI,
-                        new String[]{MembersContract.MemberInfo.MEMBER_ID},
+                        new String[]{GroupsContract.MemberInfo.MEMBER_ID},
                         null, null, null)
                 .getCount() > 0;
         Log.d("Main Activity", "Mem Status set to:" + AppState.status.isCashDatabaseInflated);

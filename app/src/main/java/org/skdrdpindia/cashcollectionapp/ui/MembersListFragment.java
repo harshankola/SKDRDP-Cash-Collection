@@ -27,7 +27,6 @@ import android.widget.TextView;
 import org.skdrdpindia.cashcollectionapp.R;
 import org.skdrdpindia.cashcollectionapp.provider.GroupsContentProvider;
 import org.skdrdpindia.cashcollectionapp.provider.GroupsContract;
-import org.skdrdpindia.cashcollectionapp.provider.MembersContract;
 
 
 /**
@@ -162,13 +161,13 @@ public class MembersListFragment
 
             //get the ID from member cursor
             long memberID = memberList.getLong(
-                    memberList.getColumnIndex(MembersContract.MemberInfo.MEMBER_ID));
+                    memberList.getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID));
 
             ContentValues memberData = new ContentValues();
-            memberData.put(MembersContract.MemberInfo.INSTALLMENT, membersCollection[0]);
-            memberData.put(MembersContract.MemberInfo.SAVINGS, membersCollection[1]);
-            memberData.put(MembersContract.MemberInfo.IS_PRESENT, presence ? 1 : 0);
-            String where = MembersContract.MemberInfo.MEMBER_ID
+            memberData.put(GroupsContract.MemberInfo.INSTALLMENT, membersCollection[0]);
+            memberData.put(GroupsContract.MemberInfo.SAVINGS, membersCollection[1]);
+            memberData.put(GroupsContract.MemberInfo.IS_PRESENT, presence ? 1 : 0);
+            String where = GroupsContract.MemberInfo.MEMBER_ID
                     + "="
                     + memberID
                     + " and "
@@ -198,16 +197,16 @@ public class MembersListFragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String SELECTION = MembersContract.MemberInfo.GROUP_ID + "=" + groupSelected;
+        String SELECTION = GroupsContract.MemberInfo.GROUP_ID + "=" + groupSelected;
         Log.d("SKDRDP Member Frag", "Members from group " + groupSelected);
         return new CursorLoader(getActivity(), GroupsContentProvider.MEMBERS_PROVIDER_URI,
                 new String[]{
-                        MembersContract.MemberInfo._ID,
-                        MembersContract.MemberInfo.MEMBER_ID,
-                        MembersContract.MemberInfo.MEMBER_NAME,
-                        MembersContract.MemberInfo.INSTALLMENT,
-                        MembersContract.MemberInfo.SAVINGS,
-                        MembersContract.MemberInfo.IS_PRESENT
+                        GroupsContract.MemberInfo._ID,
+                        GroupsContract.MemberInfo.MEMBER_ID,
+                        GroupsContract.MemberInfo.MEMBER_NAME,
+                        GroupsContract.MemberInfo.INSTALLMENT,
+                        GroupsContract.MemberInfo.SAVINGS,
+                        GroupsContract.MemberInfo.IS_PRESENT
                 },
                 SELECTION, null, null);
     }

@@ -31,16 +31,16 @@ public class MembersDbHelper extends SQLiteOpenHelper {
     private static final String NUMBER_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
     static final String MEMBERS_DB_CREATE_QUERY =
-            "CREATE TABLE " + MembersContract.MemberInfo.TABLE_NAME + " ("
-                    + MembersContract.MemberInfo._ID + " INTEGER PRIMARY KEY" + COMMA_SEP
-                    + MembersContract.MemberInfo.GROUP_ID + NUMBER_TYPE + COMMA_SEP
-                    + MembersContract.MemberInfo.MEMBER_ID + NUMBER_TYPE + COMMA_SEP
-                    + MembersContract.MemberInfo.MEMBER_NAME + TEXT_TYPE + COMMA_SEP
-                    + MembersContract.MemberInfo.INSTALLMENT + NUMBER_TYPE + COMMA_SEP
-                    + MembersContract.MemberInfo.SAVINGS + NUMBER_TYPE + COMMA_SEP
-                    + MembersContract.MemberInfo.IS_PRESENT + NUMBER_TYPE +" )";
+            "CREATE TABLE " + GroupsContract.MemberInfo.TABLE_NAME + " ("
+                    + GroupsContract.MemberInfo._ID + " INTEGER PRIMARY KEY" + COMMA_SEP
+                    + GroupsContract.MemberInfo.GROUP_ID + NUMBER_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.MEMBER_ID + NUMBER_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.MEMBER_NAME + TEXT_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.INSTALLMENT + NUMBER_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.SAVINGS + NUMBER_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.IS_PRESENT + NUMBER_TYPE + " )";
     static final String MEMBERS_DB_DELETE_QUERY =
-            "DROP TABLE IF EXISTS " + MembersContract.MemberInfo.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + GroupsContract.MemberInfo.TABLE_NAME;
 
     /**
      * Called when the database is created for the first time. This is where the

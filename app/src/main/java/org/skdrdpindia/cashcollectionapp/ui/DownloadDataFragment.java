@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import org.skdrdpindia.cashcollectionapp.R;
 import org.skdrdpindia.cashcollectionapp.provider.GroupsContentProvider;
 import org.skdrdpindia.cashcollectionapp.provider.GroupsContract;
-import org.skdrdpindia.cashcollectionapp.provider.MembersContract;
 
 
 /**
@@ -58,19 +57,19 @@ public class DownloadDataFragment extends Fragment {
                 for (int i = 0; i < 15; i++) {
                     for (int j = 0; j < 10; j++) {
                         ContentValues memvalues = new ContentValues();
-                        memvalues.put(MembersContract.MemberInfo.GROUP_ID, i + 1);
-                        memvalues.put(MembersContract.MemberInfo.MEMBER_ID, (long) ((i + 1) * 10) + (j + 1));
-                        memvalues.put(MembersContract.MemberInfo.MEMBER_NAME, "mem" + j);
-                        memvalues.put(MembersContract.MemberInfo.INSTALLMENT, 0);
-                        memvalues.put(MembersContract.MemberInfo.SAVINGS, 0);
-                        memvalues.put(MembersContract.MemberInfo.IS_PRESENT, 0);
+                        memvalues.put(GroupsContract.MemberInfo.GROUP_ID, i + 1);
+                        memvalues.put(GroupsContract.MemberInfo.MEMBER_ID, (long) ((i + 1) * 10) + (j + 1));
+                        memvalues.put(GroupsContract.MemberInfo.MEMBER_NAME, "mem" + j);
+                        memvalues.put(GroupsContract.MemberInfo.INSTALLMENT, 0);
+                        memvalues.put(GroupsContract.MemberInfo.SAVINGS, 0);
+                        memvalues.put(GroupsContract.MemberInfo.IS_PRESENT, 0);
                         Log.d("SKDRDP Member insert", "grp " + (i + 1) + " mem " + ((i + 1) * 10) + (j + 1));
                         try {
                             Log.d("Member Insert", "Items:"
                                     + "Group ID: "
-                                    + memvalues.getAsString(MembersContract.MemberInfo.GROUP_ID)
+                                    + memvalues.getAsString(GroupsContract.MemberInfo.GROUP_ID)
                                     + "Member ID: "
-                                    + memvalues.getAsString(MembersContract.MemberInfo.MEMBER_ID));
+                                    + memvalues.getAsString(GroupsContract.MemberInfo.MEMBER_ID));
                             Uri itemID = contentResolver.insert(GroupsContentProvider.MEMBERS_PROVIDER_URI, memvalues);
                             Log.d("Member insert", "Inserted URI:" + itemID);
                         } catch (Exception e) {
