@@ -104,11 +104,12 @@ public class GroupsContentProvider extends ContentProvider {
                 }
                 Log.d("Groups Provider", "Member Updating Row: rows updated is " + rowsDeleted);
                 break;
-            default: throw new IllegalArgumentException("Invalid URI"+uri);
+            default:
+                throw new IllegalArgumentException("Invalid URI" + uri);
         }
 
         //Notify Listeners
-        getContext().getContentResolver().notifyChange(uri,null);
+        getContext().getContentResolver().notifyChange(uri, null);
 
         return rowsDeleted;
     }
@@ -121,7 +122,7 @@ public class GroupsContentProvider extends ContentProvider {
 
         switch (dbUriMatcher.match(uri)) {
             case GROUPS_TABLE:
-                return  tableType + GroupsContract.GroupsInfo.TABLE_NAME;
+                return tableType + GroupsContract.GroupsInfo.TABLE_NAME;
             case MEMBERS_TABLE:
                 return tableType + GroupsContract.MemberInfo.TABLE_NAME;
             case GROUPS_ROW:
@@ -139,7 +140,7 @@ public class GroupsContentProvider extends ContentProvider {
         long id = 0;
         SQLiteDatabase db;
         int uriType = dbUriMatcher.match(uri);
-        switch (uriType){
+        switch (uriType) {
             case GROUPS_TABLE:
                 if (!AppState.status.isGroupsDatabaseInflated) {
                     Log.d("Groups Provider", "Inserting into groups table if not infalted."
@@ -160,7 +161,7 @@ public class GroupsContentProvider extends ContentProvider {
                 throw new IllegalArgumentException("Invalid URI" + uri);
         }
         //Notify the listeners
-        getContext().getContentResolver().notifyChange(uri,null);
+        getContext().getContentResolver().notifyChange(uri, null);
         return Uri.parse(uri + "/" + id);
     }
 
@@ -222,10 +223,10 @@ public class GroupsContentProvider extends ContentProvider {
 
         //get instance of the database.
         Log.d("Groups Provider", "Querying:" + dbQueryBuilder.toString());
-         Cursor resultData = dbQueryBuilder.query(db,projection,selection,
-                selectionArgs,null,null,sortOrder);
+        Cursor resultData = dbQueryBuilder.query(db, projection, selection,
+                selectionArgs, null, null, sortOrder);
         //Notify all the listeners.
-        resultData.setNotificationUri(getContext().getContentResolver(),uri);
+        resultData.setNotificationUri(getContext().getContentResolver(), uri);
         Log.d("Groups Provider", "Results in cursor is: " + resultData.getCount());
 
         return resultData;
@@ -293,7 +294,7 @@ public class GroupsContentProvider extends ContentProvider {
         }
 
         //Notify Listeners
-        getContext().getContentResolver().notifyChange(uri,null);
+        getContext().getContentResolver().notifyChange(uri, null);
 
         return rowsUpdated;
     }

@@ -141,15 +141,12 @@ public class MembersListFragment
     }
 
     public void saveCashCollection() {
-        //TODO: implement cash collection insert operations.
-
         // Get access to database.
         ContentResolver contentResolver = getActivity().getContentResolver();
-        Uri membersProviderUri = GroupsContentProvider.MEMBERS_PROVIDER_URI;
-
 
         //update each member separately.
         Cursor memberList = membersAdapter.getCursor();
+        Uri membersProviderUri = GroupsContentProvider.MEMBERS_PROVIDER_URI;
         for (int memberAtPosition = 0;
              memberAtPosition < memberList.getCount();
              memberAtPosition += 1, memberList.moveToNext()) {

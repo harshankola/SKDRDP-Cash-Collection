@@ -62,8 +62,7 @@ public class MainActivity extends ActionBarActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_exit) {
             finish();
-        }
-        else if (id == R.id.action_download) {
+        } else if (id == R.id.action_download) {
             Fragment downloadDataFragment = new DownloadDataFragment();
             swapFragment(downloadDataFragment);
         }
