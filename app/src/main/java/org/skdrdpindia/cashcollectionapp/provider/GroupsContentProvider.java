@@ -28,8 +28,7 @@ public class GroupsContentProvider extends ContentProvider {
                     + GroupsContract.MemberInfo.TABLE_NAME);
 
     //Reference to database helper.
-    private GroupsDbHelper groupsDb;
-    private MembersDbHelper membersDb;
+    private GroupsDbHelper groupsDbHelper;
 
     //URI Matcher and constants to match
     private static final UriMatcher dbUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -56,12 +55,12 @@ public class GroupsContentProvider extends ContentProvider {
 
         switch (dbUriMatcher.match(uri)) {
             case GROUPS_TABLE:
-                db = groupsDb.getWritableDatabase();
+                db = groupsDbHelper.getWritableDatabase();
                 rowsDeleted = db.delete(GroupsContract.GroupsInfo.TABLE_NAME,
                         selection, selectionArgs);
                 break;
             case GROUPS_ROW:
-                db = groupsDb.getWritableDatabase();
+                db = groupsDbHelper.getWritableDatabase();
                 String id = uri.getLastPathSegment();
                 //if selection criteria is not given.
                 if (TextUtils.isEmpty(selection)) {
@@ -74,12 +73,12 @@ public class GroupsContentProvider extends ContentProvider {
                 }
                 break;
             case MEMBERS_TABLE:
-                db = membersDb.getWritableDatabase();
+                db = groupsDbHelper.getWritableDatabase();
                 rowsDeleted = db.delete(GroupsContract.MemberInfo.TABLE_NAME,
                         selection, selectionArgs);
                 break;
             case MEMBERS_ROW:
-                db = membersDb.getWritableDatabase();
+                db = groupsDbHelper.getWritableDatabase();
                 id = uri.getLastPathSegment();
                 //if selection criteria is not given.
                 if (TextUtils.isEmpty(selection)) {
@@ -130,14 +129,14 @@ public class GroupsContentProvider extends ContentProvider {
             case GROUPS_TABLE:
                 if (!AppState.status.isGroupsDatabaseInflated) {
                     Log.d("Groups Provider", "Inserting into groups table if not infalted." + AppState.status.isGroupsDatabaseInflated);
-                    db = groupsDb.getWritableDatabase();
+                    db = groupsDbHelper.getWritableDatabase();
                     id = db.insert(GroupsContract.GroupsInfo.TABLE_NAME, null, values);
                 }
                 break;
             case MEMBERS_TABLE:
                 if (!AppState.status.isCashDatabaseInflated) {
                     Log.d("Groups Provider", "Inserting into members table if not infalted." + AppState.status.isCashDatabaseInflated);
-                    db = membersDb.getWritableDatabase();
+                    db = groupsDbHelper.getWritableDatabase();
                     id = db.insert(GroupsContract.MemberInfo.TABLE_NAME, null, values);
                 }
                 break;
@@ -152,10 +151,9 @@ public class GroupsContentProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         // setup the database helper object.
-        groupsDb = new GroupsDbHelper(getContext());
-        membersDb = new MembersDbHelper(getContext());
-        groupsDb.onUpgrade(groupsDb.getWritableDatabase(), 1, 1);
-        membersDb.onUpgrade(groupsDb.getWritableDatabase(), 1, 1);
+        groupsDbHelper = new GroupsDbHelper(getContext());
+        Log.d("Groups Provider", "Created Groups Helper" + groupsDbHelper.toString());
+        groupsDbHelper.onUpgrade(groupsDbHelper.getWritableDatabase(), 1, 1);
         return true;
     }
 
@@ -170,13 +168,13 @@ public class GroupsContentProvider extends ContentProvider {
         // find query type
         switch (dbUriMatcher.match(uri)) {
             case GROUPS_TABLE:
-                db = groupsDb.getWritableDatabase();
+                db = groupsDbHelper.getWritableDatabase();
                 //set table name according to query.
                 dbQueryBuilder.setTables(GroupsContract.GroupsInfo.TABLE_NAME);
                 Log.d("Groups Provider", "Query Group Table");
                 break;
             case GROUPS_ROW:
-                db = groupsDb.getWritableDatabase();
+                db = groupsDbHelper.getWritableDatabase();
                 //set table name according to query.
                 dbQueryBuilder.setTables(GroupsContract.GroupsInfo.TABLE_NAME);
                 dbQueryBuilder.appendWhere(GroupsContract.GroupsInfo.GROUP_ID + "="
@@ -185,13 +183,13 @@ public class GroupsContentProvider extends ContentProvider {
                         + uri.getLastPathSegment());
                 break;
             case MEMBERS_TABLE:
-                db = membersDb.getWritableDatabase();
+                db = groupsDbHelper.getWritableDatabase();
                 //set table name according to query.
                 dbQueryBuilder.setTables(GroupsContract.MemberInfo.TABLE_NAME);
                 Log.d("Groups Provider", "Query Member Table");
                 break;
             case MEMBERS_ROW:
-                db = membersDb.getWritableDatabase();
+                db = groupsDbHelper.getWritableDatabase();
                 //set table name according to query.
                 dbQueryBuilder.setTables(GroupsContract.MemberInfo.TABLE_NAME);
                 dbQueryBuilder.appendWhere(GroupsContract.MemberInfo.MEMBER_ID + "="
@@ -223,13 +221,13 @@ public class GroupsContentProvider extends ContentProvider {
 
         switch (dbUriMatcher.match(uri)) {
             case GROUPS_TABLE:
-                db = groupsDb.getWritableDatabase();
+                db = groupsDbHelper.getWritableDatabase();
                 rowsUpdated = db.update(GroupsContract.GroupsInfo.TABLE_NAME, values,
                         selection, selectionArgs);
 
                 break;
             case GROUPS_ROW:
-                db = groupsDb.getWritableDatabase();
+                db = groupsDbHelper.getWritableDatabase();
                 String id = uri.getLastPathSegment();
                 //if selection criteria is not given.
                 if (TextUtils.isEmpty(selection)) {
@@ -242,12 +240,12 @@ public class GroupsContentProvider extends ContentProvider {
                 }
                 break;
             case MEMBERS_TABLE:
-                db = membersDb.getWritableDatabase();
+                db = groupsDbHelper.getWritableDatabase();
                 rowsUpdated = db.update(GroupsContract.MemberInfo.TABLE_NAME, values,
                         selection, selectionArgs);
                 break;
             case MEMBERS_ROW:
-                db = membersDb.getWritableDatabase();
+                db = groupsDbHelper.getWritableDatabase();
                 id = uri.getLastPathSegment();
                 //if selection criteria is not given.
                 if (TextUtils.isEmpty(selection)) {

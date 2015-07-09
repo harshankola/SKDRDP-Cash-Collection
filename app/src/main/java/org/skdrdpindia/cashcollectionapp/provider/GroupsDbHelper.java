@@ -10,8 +10,10 @@ import android.util.Log;
  * Created by harsh on 6/1/2015.
  */
 public class GroupsDbHelper extends SQLiteOpenHelper {
-    static final String GROUPS_DB_NAME = "Groups.db";
+    static final String GROUPS_DB_NAME = "GroupsDb";
+
     private static final int DB_VERSION = 1;
+
 
 
     /**
@@ -31,7 +33,7 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
     private static final String NUMBER_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
     private static final String GROUP_DB_CREATE_QUERY =
-            "CREATE TABLE " + GroupsContract.GroupsInfo.TABLE_NAME + " ("
+            "CREATE TABLE IF NOT EXISTS " + GROUPS_DB_NAME + "." + GroupsContract.GroupsInfo.TABLE_NAME + " ("
                     + GroupsContract.GroupsInfo._ID + " INTEGER PRIMARY KEY" + COMMA_SEP
                     + GroupsContract.GroupsInfo.GROUP_ID + NUMBER_TYPE + COMMA_SEP
                     + GroupsContract.GroupsInfo.GROUP_NAME + TEXT_TYPE + COMMA_SEP
@@ -40,7 +42,18 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
                     + GroupsContract.GroupsInfo.MOBILE_3 + TEXT_TYPE + COMMA_SEP
                     + GroupsContract.GroupsInfo.IS_SHOWN + NUMBER_TYPE + " )";
     private static final String GROUP_DB_DELETE_QUERY =
-            "DROP TABLE IF EXISTS " + GroupsContract.GroupsInfo.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + GROUPS_DB_NAME + "." + GroupsContract.GroupsInfo.TABLE_NAME;
+    private static final String MEMBERS_DB_CREATE_QUERY =
+            "CREATE TABLE IF NOT EXISTS " + GROUPS_DB_NAME + "." + GroupsContract.MemberInfo.TABLE_NAME + " ("
+                    + GroupsContract.MemberInfo._ID + " INTEGER PRIMARY KEY" + COMMA_SEP
+                    + GroupsContract.MemberInfo.GROUP_ID + NUMBER_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.MEMBER_ID + NUMBER_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.MEMBER_NAME + TEXT_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.INSTALLMENT + NUMBER_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.SAVINGS + NUMBER_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.IS_PRESENT + NUMBER_TYPE + " )";
+    private static final String MEMBERS_DB_DELETE_QUERY =
+            "DROP TABLE IF EXISTS " + GROUPS_DB_NAME + "." + GroupsContract.MemberInfo.TABLE_NAME;
 
     /**
      * Called when the database is created for the first time. This is where the
@@ -57,6 +70,14 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
             Log.d("Groups DB Helper", "Created:" + GROUP_DB_CREATE_QUERY);
         } catch (SQLException e) {
             Log.e("SKDRDP DB", "Error opening group DB");
+        }
+        try {
+            db.execSQL(GroupsDbHelper.MEMBERS_DB_DELETE_QUERY);
+            Log.d("Member DB Helper", "Deleted:" + GroupsDbHelper.MEMBERS_DB_DELETE_QUERY);
+            db.execSQL(GroupsDbHelper.MEMBERS_DB_CREATE_QUERY);
+            Log.d("Member DB Helper", "Created:" + GroupsDbHelper.MEMBERS_DB_CREATE_QUERY);
+        } catch (SQLException e) {
+            Log.e("SKDRDP DB", "Error opening member DB");
         }
 
     }
@@ -88,6 +109,12 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
             Log.d("Groups DB Helper", "Groups DB cleared.");
         } catch (SQLException e) {
             Log.e("SKDRDP DB", "Error dropping the table.");
+        }
+        try {
+            db.execSQL(GroupsDbHelper.MEMBERS_DB_DELETE_QUERY);
+            Log.d("Member DB Helper", "Members DB cleared.");
+        } catch (SQLException e) {
+            Log.e("SKDRDP DB", "Error dropping the members table");
         }
         onCreate(db);
     }
