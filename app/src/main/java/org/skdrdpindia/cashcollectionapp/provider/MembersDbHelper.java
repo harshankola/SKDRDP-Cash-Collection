@@ -11,7 +11,7 @@ import android.util.Log;
  * Created by harsh on 6/1/2015.
  */
 public class MembersDbHelper extends SQLiteOpenHelper {
-    static final String MEMBERS_DB_NAME = "MembersDb";
+    static final String MEMBERS_DB_NAME = "membersDb";
     private static final int DB_VERSION = 1;
 
 
@@ -25,22 +25,23 @@ public class MembersDbHelper extends SQLiteOpenHelper {
      */
     public MembersDbHelper(Context context) {
         super(context, MEMBERS_DB_NAME, null, DB_VERSION);
+        Log.d("Member DB Helper", "Constructor:" + MEMBERS_DB_NAME);
     }
 
     // Query Strings
     private static final String TEXT_TYPE = " TEXT";
     private static final String NUMBER_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
-    static final String MEMBERS_DB_DELETE_QUERY =
-            "DROP TABLE IF EXISTS " + MEMBERS_DB_NAME + "." + GroupsContract.MemberInfo.TABLE_NAME;
-    static final String MEMBERS_DB_CREATE_QUERY =
-            "CREATE TABLE IF NOT EXISTS " + MEMBERS_DB_NAME + "." + GroupsContract.MemberInfo.TABLE_NAME + " ("
-                    + GroupsContract.MemberInfo._ID + " INTEGER PRIMARY KEY" + MembersDbHelper.COMMA_SEP
-                    + GroupsContract.MemberInfo.GROUP_ID + NUMBER_TYPE + MembersDbHelper.COMMA_SEP
-                    + GroupsContract.MemberInfo.MEMBER_ID + NUMBER_TYPE + MembersDbHelper.COMMA_SEP
-                    + GroupsContract.MemberInfo.MEMBER_NAME + MembersDbHelper.TEXT_TYPE + MembersDbHelper.COMMA_SEP
-                    + GroupsContract.MemberInfo.INSTALLMENT + NUMBER_TYPE + MembersDbHelper.COMMA_SEP
-                    + GroupsContract.MemberInfo.SAVINGS + NUMBER_TYPE + MembersDbHelper.COMMA_SEP
+    private static final String MEMBERS_DB_DELETE_QUERY =
+            "DROP TABLE IF EXISTS " + GroupsContract.MemberInfo.TABLE_NAME;
+    private static final String MEMBERS_DB_CREATE_QUERY =
+            "CREATE TABLE IF NOT EXISTS " + GroupsContract.MemberInfo.TABLE_NAME + " ("
+                    + GroupsContract.MemberInfo._ID + " INTEGER PRIMARY KEY" + COMMA_SEP
+                    + GroupsContract.MemberInfo.GROUP_ID + NUMBER_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.MEMBER_ID + NUMBER_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.MEMBER_NAME + TEXT_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.INSTALLMENT + NUMBER_TYPE + COMMA_SEP
+                    + GroupsContract.MemberInfo.SAVINGS + NUMBER_TYPE + COMMA_SEP
                     + GroupsContract.MemberInfo.IS_PRESENT + NUMBER_TYPE + " )";
 
 
@@ -58,7 +59,7 @@ public class MembersDbHelper extends SQLiteOpenHelper {
             db.execSQL(MEMBERS_DB_CREATE_QUERY);
             Log.d("Members DB Helper", "Created: " + MEMBERS_DB_CREATE_QUERY);
         } catch (SQLException e) {
-            Log.e("SKDRDP DB", "Error opening member DB" + MEMBERS_DB_DELETE_QUERY);
+            Log.e("SKDRDP DB", "Error opening member DB " + MEMBERS_DB_CREATE_QUERY);
         }
 
     }
@@ -87,7 +88,7 @@ public class MembersDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
             db.execSQL(MEMBERS_DB_DELETE_QUERY);
-            Log.d("Groups DB Helper", "Groups DB cleared.");
+            Log.d("Members DB Helper", "Members DB cleared. Query: " + MEMBERS_DB_DELETE_QUERY);
         } catch (SQLException e) {
             Log.e("SKDRDP DB", "Error dropping the table. " + MEMBERS_DB_DELETE_QUERY);
         }

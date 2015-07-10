@@ -172,6 +172,8 @@ public class GroupsContentProvider extends ContentProvider {
         Log.d("Groups Provider", "Created Groups Helper: " + groupsDbHelper.toString());
         membersDbHelper = new MembersDbHelper(getContext());
         Log.d("Groups Provider", "Created Members Helper: " + membersDbHelper.toString());
+        groupsDbHelper.onUpgrade(groupsDbHelper.getWritableDatabase(), 1, 1);
+        membersDbHelper.onUpgrade(membersDbHelper.getWritableDatabase(), 1, 1);
         return true;
     }
 

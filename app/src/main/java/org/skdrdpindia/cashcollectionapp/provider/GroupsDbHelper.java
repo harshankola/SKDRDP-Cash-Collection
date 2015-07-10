@@ -11,7 +11,7 @@ import android.util.Log;
  * Created by harsh on 6/1/2015.
  */
 public class GroupsDbHelper extends SQLiteOpenHelper {
-    static final String GROUPS_DB_NAME = "GroupsDb";
+    static final String GROUPS_DB_NAME = "groupsDb";
     private static final int DB_VERSION = 1;
 
     
@@ -25,6 +25,7 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
      */
     public GroupsDbHelper(Context context) {
         super(context, GROUPS_DB_NAME, null, DB_VERSION);
+        Log.d("Groups DB Helper", "Constructor:" + GROUPS_DB_NAME);
     }
 
     // Query Strings
@@ -32,7 +33,7 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
     private static final String NUMBER_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
     private static final String GROUP_DB_CREATE_QUERY =
-            "CREATE TABLE IF NOT EXISTS " + GROUPS_DB_NAME + "." + GroupsContract.GroupsInfo.TABLE_NAME + " ("
+            "CREATE TABLE " + GroupsContract.GroupsInfo.TABLE_NAME + " ("
                     + GroupsContract.GroupsInfo._ID + " INTEGER PRIMARY KEY" + COMMA_SEP
                     + GroupsContract.GroupsInfo.GROUP_ID + NUMBER_TYPE + COMMA_SEP
                     + GroupsContract.GroupsInfo.GROUP_NAME + TEXT_TYPE + COMMA_SEP
@@ -41,7 +42,7 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
                     + GroupsContract.GroupsInfo.MOBILE_3 + TEXT_TYPE + COMMA_SEP
                     + GroupsContract.GroupsInfo.IS_SHOWN + NUMBER_TYPE + " )";
     private static final String GROUP_DB_DELETE_QUERY =
-            "DROP TABLE IF EXISTS " + GROUPS_DB_NAME + "." + GroupsContract.GroupsInfo.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + GroupsContract.GroupsInfo.TABLE_NAME;
 
     /**
      * Called when the database is created for the first time. This is where the
@@ -57,7 +58,7 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
             db.execSQL(GROUP_DB_CREATE_QUERY);
             Log.d("Groups DB Helper", "Created: " + GROUP_DB_CREATE_QUERY);
         } catch (SQLException e) {
-            Log.e("SKDRDP DB", "Error opening group DB");
+            Log.e("SKDRDP DB", "Error opening group DB " + GROUP_DB_CREATE_QUERY);
         }
 
     }
@@ -86,7 +87,7 @@ public class GroupsDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         try {
             db.execSQL(GROUP_DB_DELETE_QUERY);
-            Log.d("Groups DB Helper", "Groups DB cleared.");
+            Log.d("Groups DB Helper", "Groups DB cleared. Query: " + GROUP_DB_DELETE_QUERY);
         } catch (SQLException e) {
             Log.e("SKDRDP DB", "Error dropping the table. " + GROUP_DB_DELETE_QUERY);
         }
