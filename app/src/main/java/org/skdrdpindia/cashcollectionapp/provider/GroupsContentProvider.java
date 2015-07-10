@@ -259,7 +259,7 @@ public class GroupsContentProvider extends ContentProvider {
                     rowsUpdated = db.update(GroupsContract.GroupsInfo.TABLE_NAME, values,
                             GroupsContract.GroupsInfo.GROUP_ID + "=" + id
                                     + " and " + selection, selectionArgs);
-                    Log.d("Groups Provider", "Groups selection criteria"
+                    Log.d("Groups Provider", "Groups selection criteria: "
                             + GroupsContract.GroupsInfo.GROUP_ID + "=" + id
                             + " and " + selection);
                 }
@@ -283,7 +283,7 @@ public class GroupsContentProvider extends ContentProvider {
                     rowsUpdated = db.update(GroupsContract.MemberInfo.TABLE_NAME, values,
                             GroupsContract.MemberInfo.MEMBER_ID + "=" + id
                                     + " and " + selection, selectionArgs);
-                    Log.d("Groups Provider", "Groups selection criteria"
+                    Log.d("Groups Provider", "Member selection criteria: "
                             + GroupsContract.MemberInfo.MEMBER_ID + "=" + id
                             + " and " + selection);
                 }

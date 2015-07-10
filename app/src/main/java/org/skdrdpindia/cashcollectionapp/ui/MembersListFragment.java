@@ -146,12 +146,13 @@ public class MembersListFragment
 
         //update each member separately.
         Cursor memberList = membersAdapter.getCursor();
-        Uri membersProviderUri = GroupsContentProvider.MEMBERS_PROVIDER_URI;
+
         for (int memberAtPosition = 0;
              memberAtPosition < memberList.getCount();
              memberAtPosition += 1, memberList.moveToNext()) {
 
             //get the data from members list view.
+            Uri membersProviderUri = GroupsContentProvider.MEMBERS_PROVIDER_URI;
             View memberListItem = membersAdapter.getView(memberAtPosition,
                     membersListView.getChildAt(memberAtPosition),
                     membersListView);
@@ -294,7 +295,7 @@ public class MembersListFragment
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(Uri uri);
     }
 
     private class CashCollectionWatcher implements TextWatcher {
