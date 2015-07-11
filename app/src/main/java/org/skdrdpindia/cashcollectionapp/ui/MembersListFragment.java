@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -41,6 +40,8 @@ public class MembersListFragment
         extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String GROUP_SELECTED = "GROUP_SELECTED";
+    public static final String ACTION_SAVE_COLLECTIONS = "SAVE_COLLECTION";
     private static MembersListFragment memberListFragment;
 
 
@@ -96,7 +97,7 @@ public class MembersListFragment
         // Inflate the layout for this fragment
         View membersListFragment = inflater.inflate(R.layout.fragment_members_list, container, false);
         Bundle bundle = getArguments();
-        groupSelected = bundle.getLong("GROUP_SELECTED");
+        groupSelected = bundle.getLong(GROUP_SELECTED);
 
         // initialize the Adapter and views.
         membersListView = (ListView) membersListFragment.findViewById(R.id.MembersList);
@@ -146,40 +147,10 @@ public class MembersListFragment
 
         //update each member separately.
         Cursor memberList = membersAdapter.getCursor();
+        Bundle dbParameters = new Bundle();
+        dbParameters.putLong(GROUP_SELECTED, groupSelected);
+        dbParameters.putString("ACTION", ACTION_SAVE_COLLECTIONS);
 
-        for (int memberAtPosition = 0;
-             memberAtPosition < memberList.getCount();
-             memberAtPosition += 1, memberList.moveToNext()) {
-
-            //get the data from members list view.
-            Uri membersProviderUri = GroupsContentProvider.MEMBERS_PROVIDER_URI;
-            View memberListItem = membersAdapter.getView(memberAtPosition,
-                    membersListView.getChildAt(memberAtPosition),
-                    membersListView);
-            boolean presence = membersAdapter.isPresent(memberListItem);
-            int[] membersCollection = membersAdapter.getMembersCollection(memberListItem);
-
-            //get the ID from member cursor
-            long memberID = memberList.getLong(
-                    memberList.getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID));
-
-            ContentValues memberData = new ContentValues();
-            memberData.put(GroupsContract.MemberInfo.INSTALLMENT, membersCollection[0]);
-            memberData.put(GroupsContract.MemberInfo.SAVINGS, membersCollection[1]);
-            memberData.put(GroupsContract.MemberInfo.IS_PRESENT, presence ? 1 : 0);
-            membersProviderUri = Uri.withAppendedPath(membersProviderUri, Long.toString(memberID));
-            String where = GroupsContract.GroupsInfo.GROUP_ID
-                    + "="
-                    + groupSelected;
-            contentResolver.update(membersProviderUri, memberData, where, null);
-        }
-
-        //update the groups to indicate the list has been updated.
-        ContentValues groupData = new ContentValues();
-        groupData.put(GroupsContract.GroupsInfo.IS_SHOWN, 0);
-        Uri groupsProviderUri = GroupsContentProvider.GROUPS_PROVIDER_URI;
-        groupsProviderUri = Uri.withAppendedPath(groupsProviderUri, Long.toString(groupSelected));
-        contentResolver.update(groupsProviderUri, groupData, null, null);
 
         //after updation is done, do the back button pressing event.
         ((MainActivity) this.getActivity()).swapFragment(new GroupListFragment());
