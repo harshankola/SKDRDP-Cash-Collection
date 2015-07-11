@@ -41,11 +41,11 @@ public class DownloadDataFragment extends Fragment {
                 values.put(GroupsContract.GroupsInfo.MOBILE_2, (i * 250) + "");
                 values.put(GroupsContract.GroupsInfo.MOBILE_3, (i * 375) + "");
                 values.put(GroupsContract.GroupsInfo.IS_SHOWN, 1);
-                Log.d("SKDRDP Group insert", "grp " + (i + 1));
+//                Log.d("SKDRDP Group insert", "grp " + (i + 1));
                 try {
-                    Log.d("Group Insert", "Items:"
+                    /*Log.d("Group Insert", "Items:"
                             + "Group ID: "
-                            + values.getAsString(GroupsContract.GroupsInfo.GROUP_ID));
+                            + values.getAsString(GroupsContract.GroupsInfo.GROUP_ID));*/
                     contentResolver.insert(GroupsContentProvider.GROUPS_PROVIDER_URI, values);
                 } catch (Exception e) {
 
@@ -63,15 +63,15 @@ public class DownloadDataFragment extends Fragment {
                         memvalues.put(GroupsContract.MemberInfo.INSTALLMENT, 0);
                         memvalues.put(GroupsContract.MemberInfo.SAVINGS, 0);
                         memvalues.put(GroupsContract.MemberInfo.IS_PRESENT, 0);
-                        Log.d("SKDRDP Member insert", "grp " + (i + 1) + " mem " + ((i + 1) * 10) + (j + 1));
+//                        Log.d("SKDRDP Member insert", "grp " + (i + 1) + " mem " + ((i + 1) * 10) + (j + 1));
                         try {
-                            Log.d("Member Insert", "Items:"
+                            /*Log.d("Member Insert", "Items:"
                                     + "Group ID: "
                                     + memvalues.getAsString(GroupsContract.MemberInfo.GROUP_ID)
                                     + "Member ID: "
-                                    + memvalues.getAsString(GroupsContract.MemberInfo.MEMBER_ID));
+                                    + memvalues.getAsString(GroupsContract.MemberInfo.MEMBER_ID));*/
                             Uri itemID = contentResolver.insert(GroupsContentProvider.MEMBERS_PROVIDER_URI, memvalues);
-                            Log.d("Member insert", "Inserted URI:" + itemID);
+//                            Log.d("Member insert", "Inserted URI:" + itemID);
                         } catch (Exception e) {
                             Log.e("SKDRDP UI", "insert op failed mem" + i);
                             break;

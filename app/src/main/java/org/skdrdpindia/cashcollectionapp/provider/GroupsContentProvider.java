@@ -245,8 +245,8 @@ public class GroupsContentProvider extends ContentProvider {
                 db = groupsDbHelper.getWritableDatabase();
                 rowsUpdated = db.update(GroupsContract.GroupsInfo.TABLE_NAME, values,
                         selection, selectionArgs);
-                Log.d("Groups Provider", "Groups Updating Table: " + selection);
-                Log.d("Groups Provider", "Member Updated Row: rows updated is " + rowsUpdated);
+//                Log.d("Groups Provider", "Groups Updating Table: " + selection);
+//                Log.d("Groups Provider", "Groups Updated Row: rows updated is " + rowsUpdated);
                 break;
             case GROUPS_ROW:
                 db = groupsDbHelper.getWritableDatabase();
@@ -263,14 +263,14 @@ public class GroupsContentProvider extends ContentProvider {
                             + GroupsContract.GroupsInfo.GROUP_ID + "=" + id
                             + " and " + selection);
                 }
-                Log.d("Groups Provider", "Groups Updating Row: rows updated is " + rowsUpdated);
+//                Log.d("Groups Provider", "Groups Updating Row: rows updated is " + rowsUpdated);
                 break;
             case MEMBERS_TABLE:
                 db = membersDbHelper.getWritableDatabase();
                 rowsUpdated = db.update(GroupsContract.MemberInfo.TABLE_NAME, values,
                         selection, selectionArgs);
-                Log.d("Groups Provider", "Member Updating Table: " + selection);
-                Log.d("Groups Provider", "Member Updated Row: rows updated is " + rowsUpdated);
+//                Log.d("Groups Provider", "Member Updating Table: " + selection);
+//                Log.d("Groups Provider", "Member Updated Row: rows updated is " + rowsUpdated);
                 break;
             case MEMBERS_ROW:
                 db = membersDbHelper.getWritableDatabase();
@@ -287,7 +287,7 @@ public class GroupsContentProvider extends ContentProvider {
                             + GroupsContract.MemberInfo.MEMBER_ID + "=" + id
                             + " and " + selection);
                 }
-                Log.d("Groups Provider", "Member Updating Row: rows updated is " + rowsUpdated);
+//                Log.d("Groups Provider", "Member Updating Row: rows updated is " + rowsUpdated);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid URI " + uri);

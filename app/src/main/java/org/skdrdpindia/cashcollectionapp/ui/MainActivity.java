@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -140,25 +139,25 @@ public class MainActivity extends ActionBarActivity
             ContentResolver contentResolver = MainActivity.this.getContentResolver();
             ListView membersListView = (ListView) findViewById(R.id.MembersList);
             MemberListAdapter memberListAdapter = (MemberListAdapter) membersListView.getAdapter();
-            Cursor memberList = memberListAdapter.getCursor();
+
 
             //update each member separately.
+            int totalMembers = memberListAdapter.getCount();
             for (int memberAtPosition = 0;
-                 memberAtPosition < memberList.getCount();
-                 memberAtPosition += 1, memberList.moveToNext()) {
+                 memberAtPosition < totalMembers;
+                 memberAtPosition++) {
 
-                //get the data from members list view.
-                View memberListItem = memberListAdapter.getView(memberAtPosition,
-                        membersListView.getChildAt(memberAtPosition),
-                        membersListView);
-                boolean presence = memberListAdapter.isPresent(memberListItem);
-                int[] membersCollection = memberListAdapter.getMembersCollection(memberListItem);
+                Log.d("Update Task", "About to update Member at position: " + memberAtPosition + " of " + totalMembers);
 
-                //get the ID from member cursor
-                long memberID = memberList.getLong(
-                        memberList.getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID));
+                //get the data from querying the adapter.
+                boolean presence = memberListAdapter.isPresent(memberAtPosition);
+                int[] membersCollection = memberListAdapter.getMembersCollection(memberAtPosition);
+                long memberID = memberListAdapter.getMembersID(memberAtPosition);
 
                 // Update the row.
+                Log.d("Update Task", "Updating: Member ID: " + memberID
+                        + "Presence: " + presence
+                        + "Collections" + membersCollection);
                 updateMemberRow(groupSelected, contentResolver, presence, membersCollection, memberID);
             }
 
