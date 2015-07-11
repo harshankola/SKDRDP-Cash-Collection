@@ -88,7 +88,7 @@ public class DatabasePopulationService extends IntentService {
      * parameters.
      */
     private void handleActionInflateDb(String groupsDataURL, String membersDataURL) {
-        // TODO: Insert the data fetched from JSON into database.
+        // Insert the data fetched from JSON into database.
         try {
             JSONArray downloadedData = new JSONArray(groupsDataURL);
             ContentResolver contentResolver;
@@ -129,7 +129,6 @@ public class DatabasePopulationService extends IntentService {
         } catch (Exception e) {
             Log.e("Inflating DB", "Error inserting data.");
         }
-        throw new UnsupportedOperationException("Not yet implemented");
     }
     
     /**

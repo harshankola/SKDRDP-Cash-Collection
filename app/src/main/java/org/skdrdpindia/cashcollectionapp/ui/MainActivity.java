@@ -24,6 +24,11 @@ public class MainActivity extends ActionBarActivity
         implements GroupListFragment.OnFragmentInteractionListener,
         MembersListFragment.OnFragmentInteractionListener {
 
+
+    public DatabaseUpdateTasks newDatabaseUpdateTask() {
+        return new DatabaseUpdateTasks();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +88,11 @@ public class MainActivity extends ActionBarActivity
         swapFragment(groupListFragment);
     }
 
+    /**
+     * called by attached fragments when their tasks are over and need to be replaced.
+     *
+     * @param fragment the instance of fragment to be changed with.
+     */
     public void swapFragment(Fragment fragment) {
         FragmentTransaction fragmentChanger = getFragmentManager().beginTransaction();
         fragmentChanger.replace(R.id.fragment, fragment);
@@ -98,7 +108,7 @@ public class MainActivity extends ActionBarActivity
      * An asynchronus task to save the cash collections, mark the group as absent.
      * Created by harsh on 7/11/2015.
      */
-    private class DatabaseUpdateTasks extends AsyncTask<Bundle, Object, Object> {
+    public class DatabaseUpdateTasks extends AsyncTask<Bundle, Object, Object> {
         /**
          * <p>Runs on the UI thread after {@link #doInBackground}. The
          * specified result is the value returned by {@link #doInBackground}.</p>
@@ -125,11 +135,13 @@ public class MainActivity extends ActionBarActivity
          * @param groupSelected
          */
         private void saveCashCollection(long groupSelected) {
+
             // Get access to database.
             ContentResolver contentResolver = MainActivity.this.getContentResolver();
             ListView membersListView = (ListView) findViewById(R.id.MembersList);
             MemberListAdapter memberListAdapter = (MemberListAdapter) membersListView.getAdapter();
             Cursor memberList = memberListAdapter.getCursor();
+
             //update each member separately.
             for (int memberAtPosition = 0;
                  memberAtPosition < memberList.getCount();
@@ -146,26 +158,35 @@ public class MainActivity extends ActionBarActivity
                 long memberID = memberList.getLong(
                         memberList.getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID));
 
-                ContentValues memberData = new ContentValues();
-                memberData.put(GroupsContract.MemberInfo.INSTALLMENT, membersCollection[0]);
-                memberData.put(GroupsContract.MemberInfo.SAVINGS, membersCollection[1]);
-                memberData.put(GroupsContract.MemberInfo.IS_PRESENT, presence ? 1 : 0);
-                Uri membersProviderUri = Uri.withAppendedPath(
-                        GroupsContentProvider.MEMBERS_PROVIDER_URI,
-                        Long.toString(memberID)
-                );
-                String where = GroupsContract.GroupsInfo.GROUP_ID
-                        + "="
-                        + groupSelected;
-                contentResolver.update(membersProviderUri, memberData, where, null);
+                // Update the row.
+                updateMemberRow(groupSelected, contentResolver, presence, membersCollection, memberID);
             }
 
             //update the groups to indicate the list has been updated.
+            markGroupAsCompleted(groupSelected, contentResolver);
+        }
+
+        private void markGroupAsCompleted(long groupSelected, ContentResolver contentResolver) {
             ContentValues groupData = new ContentValues();
             groupData.put(GroupsContract.GroupsInfo.IS_SHOWN, 0);
             Uri groupsProviderUri = GroupsContentProvider.GROUPS_PROVIDER_URI;
             groupsProviderUri = Uri.withAppendedPath(groupsProviderUri, Long.toString(groupSelected));
             contentResolver.update(groupsProviderUri, groupData, null, null);
+        }
+
+        private void updateMemberRow(long groupSelected, ContentResolver contentResolver, boolean presence, int[] membersCollection, long memberID) {
+            ContentValues memberData = new ContentValues();
+            memberData.put(GroupsContract.MemberInfo.INSTALLMENT, membersCollection[0]);
+            memberData.put(GroupsContract.MemberInfo.SAVINGS, membersCollection[1]);
+            memberData.put(GroupsContract.MemberInfo.IS_PRESENT, presence ? 1 : 0);
+            Uri membersProviderUri = Uri.withAppendedPath(
+                    GroupsContentProvider.MEMBERS_PROVIDER_URI,
+                    Long.toString(memberID)
+            );
+            String where = GroupsContract.GroupsInfo.GROUP_ID
+                    + "="
+                    + groupSelected;
+            contentResolver.update(membersProviderUri, memberData, where, null);
         }
 
         /**

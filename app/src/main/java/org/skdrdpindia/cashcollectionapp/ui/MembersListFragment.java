@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -142,15 +141,12 @@ public class MembersListFragment
     }
 
     public void saveCashCollection() {
-        // Get access to database.
-        ContentResolver contentResolver = getActivity().getContentResolver();
-
-        //update each member separately.
-        Cursor memberList = membersAdapter.getCursor();
+        // get instance of Async Task and execute it.
         Bundle dbParameters = new Bundle();
         dbParameters.putLong(GROUP_SELECTED, groupSelected);
         dbParameters.putString("ACTION", ACTION_SAVE_COLLECTIONS);
-
+        MainActivity.DatabaseUpdateTasks asyncTask = ((MainActivity) this.getActivity()).newDatabaseUpdateTask();
+        asyncTask.execute(dbParameters);
 
         //after updation is done, do the back button pressing event.
         ((MainActivity) this.getActivity()).swapFragment(new GroupListFragment());
