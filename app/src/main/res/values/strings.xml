@@ -10,6 +10,8 @@
     <string name="action_inflate">Save data to app</string>
     <string name="action_create_json">Prepare the file</string>
     <string name="action_save_collection">Save</string>
+    <string name="action_cash_collection">Go For Collection</string>
+    <string name="action_cash_disbursement">Cash Payments</string>
 
     <!-- text Labels -->
     <string name="txt_member_id">MemID</string>

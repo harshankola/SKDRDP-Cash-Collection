@@ -19,9 +19,7 @@ import org.skdrdpindia.cashcollectionapp.provider.GroupsContentProvider;
 import org.skdrdpindia.cashcollectionapp.provider.GroupsContract;
 
 
-public class MainActivity extends ActionBarActivity
-        implements GroupListFragment.OnFragmentInteractionListener,
-        MembersListFragment.OnFragmentInteractionListener {
+public class MainActivity extends ActionBarActivity {
 
 
     public DatabaseUpdateTasks newDatabaseUpdateTask() {
@@ -96,11 +94,6 @@ public class MainActivity extends ActionBarActivity
         FragmentTransaction fragmentChanger = getFragmentManager().beginTransaction();
         fragmentChanger.replace(R.id.fragment, fragment);
         fragmentChanger.commit();
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 
     /**
@@ -206,7 +199,7 @@ public class MainActivity extends ActionBarActivity
         protected Object doInBackground(Bundle... params) {
             String action = params[0].getString("ACTION");
             if (action.equals(MembersListFragment.ACTION_SAVE_COLLECTIONS)) {
-                saveCashCollection(params[0].getLong(MembersListFragment.GROUP_SELECTED));
+                saveCashCollection(params[0].getLong(GroupListFragment.GROUP_SELECTED));
             }
             return null;
         }

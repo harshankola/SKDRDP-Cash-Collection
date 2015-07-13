@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,18 +27,16 @@ import org.skdrdpindia.cashcollectionapp.provider.GroupsContract;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link GroupListFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
  * Use the {@link GroupListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class GroupListFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String GROUP_SELECTED = "GROUP_SELECTED";
     SimpleCursorAdapter groupsAdapter;
     String[] GROUPS_PROJECTION = new String[]
             {GroupsContract.GroupsInfo.GROUP_ID, GroupsContract.GroupsInfo.GROUP_NAME};
-    private OnFragmentInteractionListener mListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -47,7 +44,6 @@ public class GroupListFragment extends Fragment
      *
      * @return A new instance of fragment GroupListFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static GroupListFragment newInstance() {
         GroupListFragment fragment = new GroupListFragment();
         return fragment;
@@ -123,42 +119,27 @@ public class GroupListFragment extends Fragment
     private void loadMemberList(AdapterView<?> parent, int position) {
         // get GROUP_ID of selected group.
         Cursor groupList = (Cursor) parent.getItemAtPosition(position);
-        MembersListFragment membersListFragment = new MembersListFragment();
+        CashOptionsFragment cashOptionsFragment = CashOptionsFragment.newInstance();
         Bundle bundle = new Bundle();
-        bundle.putLong("GROUP_SELECTED", groupList.getLong(
+        bundle.putLong(GROUP_SELECTED, groupList.getLong(
                 groupList.getColumnIndex(
                         GroupsContract.GroupsInfo.GROUP_ID
                 )
         ));
-        membersListFragment.setArguments(bundle);
+        cashOptionsFragment.setArguments(bundle);
 
         //Start member list fragment.
-        ((MainActivity) this.getActivity()).swapFragment(membersListFragment);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        ((MainActivity) this.getActivity()).swapFragment(cashOptionsFragment);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
         getLoaderManager().destroyLoader(0);
     }
 
@@ -247,21 +228,6 @@ public class GroupListFragment extends Fragment
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         groupsAdapter.swapCursor(null);
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
     }
 
 }

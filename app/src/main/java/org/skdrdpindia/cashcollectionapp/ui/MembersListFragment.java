@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
@@ -37,14 +36,12 @@ public class MembersListFragment
         extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String GROUP_SELECTED = "GROUP_SELECTED";
     public static final String ACTION_SAVE_COLLECTIONS = "SAVE_COLLECTION";
     private static MembersListFragment memberListFragment;
 
 
     private final SaveCollectionListener saveCollectionListener = new SaveCollectionListener();
     ListView membersListView;
-    private OnFragmentInteractionListener mListener;
     private MemberListAdapter membersAdapter;
     private int totalSum = 0;
     private long groupSelected;
@@ -60,7 +57,6 @@ public class MembersListFragment
      *
      * @return A new instance of fragment MembersListFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static MembersListFragment newInstance() {
         return new MembersListFragment();
     }
@@ -84,7 +80,7 @@ public class MembersListFragment
         // Inflate the layout for this fragment
         View membersListFragment = inflater.inflate(R.layout.fragment_members_list, container, false);
         Bundle bundle = getArguments();
-        groupSelected = bundle.getLong(GROUP_SELECTED);
+        groupSelected = bundle.getLong(GroupListFragment.GROUP_SELECTED);
 
         // initialize the Adapter and views.
         membersListView = (ListView) membersListFragment.findViewById(R.id.MembersList);
@@ -104,34 +100,21 @@ public class MembersListFragment
         return membersListFragment;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        getLoaderManager().destroyLoader(0);
     }
 
     public void saveCashCollection() {
         // get instance of Async Task and execute it.
         Bundle dbParameters = new Bundle();
-        dbParameters.putLong(GROUP_SELECTED, groupSelected);
+        dbParameters.putLong(GroupListFragment.GROUP_SELECTED, groupSelected);
         dbParameters.putString("ACTION", ACTION_SAVE_COLLECTIONS);
         MainActivity.DatabaseUpdateTasks asyncTask = ((MainActivity) this.getActivity()).newDatabaseUpdateTask();
         asyncTask.execute(dbParameters);
@@ -237,21 +220,6 @@ public class MembersListFragment
         }
 
         txtTotalCollection.setText(totalSum + " Rupees");
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
     private class SaveCollectionListener implements View.OnClickListener {
