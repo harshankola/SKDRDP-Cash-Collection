@@ -2,21 +2,30 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              tools:context="org.skdrdpindia.cashcollectionapp.ui.CashOptionsFragment"
-              android:orientation="vertical">
+              android:background="#81C784"
+              android:orientation="vertical"
+              android:paddingBottom="@dimen/activity_vertical_margin"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:paddingTop="@dimen/activity_vertical_margin"
+              tools:context="org.skdrdpindia.cashcollectionapp.ui.CashOptionsFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
     <Button
+        android:id="@+id/btnCashCollection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#00C853"
         android:text="@string/action_cash_collection"
-        android:id="@+id/btnCashCollection"/>
+        android:layout_marginBottom="16dp"/>
 
     <Button
+        android:id="@+id/btnCashPayment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:enabled="false"
         android:text="@string/action_cash_disbursement"
-        android:id="@+id/btnCashPayment"
-        android:enabled="false"/>
+        android:background="#B9F6CA"/>
 </LinearLayout>

@@ -5,7 +5,7 @@
     android:clickable="false"
     android:descendantFocusability="blocksDescendants"
     android:focusableInTouchMode="false"
-    android:background="#2196F3"
+              android:background="#C8E6C9"
     android:focusable="false">
 
     <TextView
@@ -16,8 +16,7 @@
         android:padding="16dp"
         android:clickable="false"
         android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:textColor="#FFFFFF" />
+        android:focusableInTouchMode="false"/>
 
     <TextView
         android:layout_width="0dp"
@@ -27,7 +26,6 @@
         android:padding="16dp"
         android:clickable="false"
         android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:textColor="#FFFFFF" />
+        android:focusableInTouchMode="false"/>
 
 </LinearLayout>

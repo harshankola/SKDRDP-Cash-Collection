@@ -1,29 +1,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="org.skdrdpindia.cashcollectionapp.ui.MembersListFragment"
-    android:orientation="vertical">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:paddingBottom="@dimen/activity_vertical_margin"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:paddingTop="@dimen/activity_vertical_margin"
+              tools:context="org.skdrdpindia.cashcollectionapp.ui.MembersListFragment"
+              android:background="#C8E6C9">
 
     <ListView
+        android:id="@+id/MembersList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:id="@+id/MembersList"
-        tools:listitem="@layout/member_list_item"
         android:layout_weight="9"
-        android:clickable="false"/>
+        android:clickable="false"
+        tools:listitem="@layout/member_list_item"/>
 
     <TextView
+        android:id="@+id/txtTotalCollection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txtTotalCollection"
+        android:background="#00C853"
         android:editable="true"
         android:text="0"
+        android:textColor="#FFFFFF"
         android:textSize="24sp"/>
 
     <Button
+        android:id="@+id/btnSaveCollection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnSaveCollection"
-        android:text="@string/action_save_collection" />
+        android:background="#00E676"
+        android:text="@string/action_save_collection"/>
 
 </LinearLayout>

@@ -1,11 +1,13 @@
 package org.skdrdpindia.cashcollectionapp.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -34,6 +36,7 @@ public class GroupListFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String GROUP_SELECTED = "GROUP_SELECTED";
+    public static final String ACTION_GROUP_ABSENT = "GROUP_ABSENT";
     SimpleCursorAdapter groupsAdapter;
     String[] GROUPS_PROJECTION = new String[]
             {GroupsContract.GroupsInfo.GROUP_ID, GroupsContract.GroupsInfo.GROUP_NAME};
@@ -96,7 +99,7 @@ public class GroupListFragment extends Fragment
             groupsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    loadMemberList(parent, position);
+                    selectGroupForAbsenting(parent, position);
 
                 }
             });
@@ -116,19 +119,52 @@ public class GroupListFragment extends Fragment
 
     }
 
-    private void loadMemberList(AdapterView<?> parent, int position) {
+    private void selectGroupForAbsenting(AdapterView<?> parent, int position) {
         // get GROUP_ID of selected group.
         Cursor groupList = (Cursor) parent.getItemAtPosition(position);
-        CashOptionsFragment cashOptionsFragment = CashOptionsFragment.newInstance();
-        Bundle bundle = new Bundle();
-        bundle.putLong(GROUP_SELECTED, groupList.getLong(
+        final long groupSelected = groupList.getLong(
                 groupList.getColumnIndex(
                         GroupsContract.GroupsInfo.GROUP_ID
                 )
-        ));
+        );
+
+        //Show a dialog box to confirm whether the group is absent or present.
+        AlertDialog.Builder groupAbsentDialogBuilder = new AlertDialog.Builder(getActivity());
+        groupAbsentDialogBuilder
+                .setTitle("Is the group Absent?")
+                .setMessage("Group Selected is:" + groupSelected)
+                .setPositiveButton("Mark Absent", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Mark Group as absent.
+                        Bundle dbParameters = new Bundle();
+                        dbParameters.putLong(GroupListFragment.GROUP_SELECTED, groupSelected);
+                        dbParameters.putString("ACTION", ACTION_GROUP_ABSENT);
+                        MainActivity.DatabaseUpdateTasks asyncTask =
+                                ((MainActivity) GroupListFragment.this.getActivity())
+                                        .newDatabaseUpdateTask();
+                        asyncTask.execute(dbParameters);
+                    }
+                })
+                .setNegativeButton("Mark Present", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // groups is Present, hence go for Collection.
+                        goForCollection(groupSelected);
+                    }
+                });
+        AlertDialog groupAbsentDialog = groupAbsentDialogBuilder.create();
+        groupAbsentDialog.show();
+        ((MainActivity) this.getActivity()).swapFragment(newInstance());
+    }
+
+    private void goForCollection(long groupSelected) {
+        Bundle bundle = new Bundle();
+        bundle.putLong(GROUP_SELECTED, groupSelected);
+        CashOptionsFragment cashOptionsFragment = CashOptionsFragment.newInstance();
         cashOptionsFragment.setArguments(bundle);
 
-        //Start member list fragment.
+        //Start cash options fragment.
         ((MainActivity) this.getActivity()).swapFragment(cashOptionsFragment);
     }
 

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -117,8 +118,37 @@ public class MainActivity extends ActionBarActivity {
             super.onPostExecute(o);
         }
 
-        public void markGroupAbsent() {
-            //TODO: mark the group as absent.
+        public void markGroupAbsent(long groupSelected) {
+            // Get access to database.
+            ContentResolver contentResolver = MainActivity.this.getContentResolver();
+            String SELECTION = GroupsContract.MemberInfo.GROUP_ID + "=" + groupSelected;
+            Cursor memberList = contentResolver.query(GroupsContentProvider.MEMBERS_PROVIDER_URI,
+                    new String[]{GroupsContract.MemberInfo.MEMBER_ID},
+                    SELECTION, null, null);
+
+
+            //update each member separately.
+            int totalMembers = memberList.getCount();
+            for (int memberAtPosition = 0;
+                 memberAtPosition < totalMembers;
+                 memberAtPosition++) {
+
+                Log.d("Update Task", "Absenting Member at position: " + memberAtPosition + " of " + totalMembers);
+
+                //get the data from querying the adapter.
+                boolean presence = false;
+                int[] membersCollection = new int[]{0, 0};
+                long memberID = memberList.getLong(memberList.getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID));
+
+                // Update the row.
+                Log.d("Update Task", "Absenting: Member ID: " + memberID
+                        + "Presence: " + presence
+                        + "Collections" + membersCollection);
+                updateMemberRow(groupSelected, contentResolver, presence, membersCollection, memberID);
+            }
+
+            //update the groups to indicate the list has been updated.
+            markGroupAsCompleted(groupSelected, contentResolver);
         }
 
         /**
@@ -200,6 +230,8 @@ public class MainActivity extends ActionBarActivity {
             String action = params[0].getString("ACTION");
             if (action.equals(MembersListFragment.ACTION_SAVE_COLLECTIONS)) {
                 saveCashCollection(params[0].getLong(GroupListFragment.GROUP_SELECTED));
+            } else if (action.equals(GroupListFragment.ACTION_GROUP_ABSENT)) {
+                markGroupAbsent(params[0].getLong(GroupListFragment.GROUP_SELECTED));
             }
             return null;
         }
