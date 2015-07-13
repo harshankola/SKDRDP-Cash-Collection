@@ -20,7 +20,12 @@ import org.skdrdpindia.cashcollectionapp.provider.GroupsContentProvider;
 import org.skdrdpindia.cashcollectionapp.provider.GroupsContract;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity
+        implements GroupListFragment.OnFragmentInteractionListener,
+        MembersListFragment.OnFragmentInteractionListener,
+        CashOptionsFragment.OnFragmentInteractionListener,
+        DownloadDataFragment.OnFragmentInteractionListener,
+        UploadDataFragment.OnFragmentInteractionListener {
 
 
     public DatabaseUpdateTasks newDatabaseUpdateTask() {
@@ -97,11 +102,19 @@ public class MainActivity extends ActionBarActivity {
         fragmentChanger.commit();
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
     /**
      * An asynchronus task to save the cash collections, mark the group as absent.
      * Created by harsh on 7/11/2015.
      */
     public class DatabaseUpdateTasks extends AsyncTask<Bundle, Object, Object> {
+        public DatabaseUpdateTasks() {
+        }
+
         /**
          * <p>Runs on the UI thread after {@link #doInBackground}. The
          * specified result is the value returned by {@link #doInBackground}.</p>
@@ -129,9 +142,10 @@ public class MainActivity extends ActionBarActivity {
 
             //update each member separately.
             int totalMembers = memberList.getCount();
+            memberList.moveToFirst();
             for (int memberAtPosition = 0;
                  memberAtPosition < totalMembers;
-                 memberAtPosition++) {
+                 memberAtPosition++, memberList.moveToNext()) {
 
                 Log.d("Update Task", "Absenting Member at position: " + memberAtPosition + " of " + totalMembers);
 

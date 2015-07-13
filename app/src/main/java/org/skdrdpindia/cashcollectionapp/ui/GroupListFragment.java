@@ -10,6 +10,7 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,6 +41,8 @@ public class GroupListFragment extends Fragment
     SimpleCursorAdapter groupsAdapter;
     String[] GROUPS_PROJECTION = new String[]
             {GroupsContract.GroupsInfo.GROUP_ID, GroupsContract.GroupsInfo.GROUP_NAME};
+    private OnFragmentInteractionListener mListener;
+    private Activity activity;
 
     /**
      * Use this factory method to create a new instance of
@@ -137,13 +140,7 @@ public class GroupListFragment extends Fragment
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Mark Group as absent.
-                        Bundle dbParameters = new Bundle();
-                        dbParameters.putLong(GroupListFragment.GROUP_SELECTED, groupSelected);
-                        dbParameters.putString("ACTION", ACTION_GROUP_ABSENT);
-                        MainActivity.DatabaseUpdateTasks asyncTask =
-                                ((MainActivity) GroupListFragment.this.getActivity())
-                                        .newDatabaseUpdateTask();
-                        asyncTask.execute(dbParameters);
+                        markGroupAbsent(groupSelected);
                     }
                 })
                 .setNegativeButton("Mark Present", new DialogInterface.OnClickListener() {
@@ -158,6 +155,14 @@ public class GroupListFragment extends Fragment
         ((MainActivity) this.getActivity()).swapFragment(newInstance());
     }
 
+    public void markGroupAbsent(long groupSelected) {
+        Bundle dbParameters = new Bundle();
+        dbParameters.putLong(GROUP_SELECTED, groupSelected);
+        dbParameters.putString("ACTION", ACTION_GROUP_ABSENT);
+        MainActivity.DatabaseUpdateTasks asyncTask = ((MainActivity) activity).newDatabaseUpdateTask();
+        asyncTask.execute(dbParameters);
+    }
+
     private void goForCollection(long groupSelected) {
         Bundle bundle = new Bundle();
         bundle.putLong(GROUP_SELECTED, groupSelected);
@@ -165,18 +170,33 @@ public class GroupListFragment extends Fragment
         cashOptionsFragment.setArguments(bundle);
 
         //Start cash options fragment.
-        ((MainActivity) this.getActivity()).swapFragment(cashOptionsFragment);
+        ((MainActivity) activity).swapFragment(cashOptionsFragment);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        try {
+            this.activity = activity;
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         getLoaderManager().destroyLoader(0);
+        mListener = null;
     }
 
     /**
@@ -264,6 +284,21 @@ public class GroupListFragment extends Fragment
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         groupsAdapter.swapCursor(null);
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
     }
 
 }

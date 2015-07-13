@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
@@ -35,7 +36,8 @@ public class MembersListFragment
 
     public static final String ACTION_SAVE_COLLECTIONS = "SAVE_COLLECTION";
     private static MembersListFragment memberListFragment;
-
+    private OnFragmentInteractionListener mListener;
+    private Activity activity;
 
     private final SaveCollectionListener saveCollectionListener = new SaveCollectionListener();
     ListView membersListView;
@@ -100,12 +102,26 @@ public class MembersListFragment
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        try {
+            this.activity = activity;
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
     @Override
     public void onDetach() {
         super.onDetach();
         getLoaderManager().destroyLoader(0);
+        mListener = null;
     }
 
     public void saveCashCollection() {
@@ -113,11 +129,11 @@ public class MembersListFragment
         Bundle dbParameters = new Bundle();
         dbParameters.putLong(GroupListFragment.GROUP_SELECTED, groupSelected);
         dbParameters.putString("ACTION", ACTION_SAVE_COLLECTIONS);
-        MainActivity.DatabaseUpdateTasks asyncTask = ((MainActivity) this.getActivity()).newDatabaseUpdateTask();
+        MainActivity.DatabaseUpdateTasks asyncTask = ((MainActivity) activity).newDatabaseUpdateTask();
         asyncTask.execute(dbParameters);
 
         //after updation is done, do the back button pressing event.
-        ((MainActivity) this.getActivity()).swapFragment(new GroupListFragment());
+        ((MainActivity) activity).swapFragment(new GroupListFragment());
     }
 
     /**
@@ -235,5 +251,20 @@ public class MembersListFragment
             }
 
         }
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
     }
 }
