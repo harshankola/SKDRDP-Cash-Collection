@@ -11,8 +11,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +42,6 @@ public class MembersListFragment
     private static MembersListFragment memberListFragment;
 
 
-    private final CashCollectionWatcher collectionWatcher = new CashCollectionWatcher();
     private final SaveCollectionListener saveCollectionListener = new SaveCollectionListener();
     ListView membersListView;
     private OnFragmentInteractionListener mListener;
@@ -75,15 +72,6 @@ public class MembersListFragment
         return newInstance();
     }
 
-    /**
-     * gets instance of Listener hearing Cash Collections.
-     *
-     * @return instance of Cash Collection Watcher.
-     */
-    public CashCollectionWatcher getCollectionWatcher() {
-        return collectionWatcher;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,7 +88,7 @@ public class MembersListFragment
 
         // initialize the Adapter and views.
         membersListView = (ListView) membersListFragment.findViewById(R.id.MembersList);
-        membersAdapter = new MemberListAdapter(getActivity().getApplicationContext());
+        membersAdapter = new MemberListAdapter(getActivity().getApplicationContext(), memberListFragment);
         membersAdapter.setViewBinder(membersAdapter);
 
         //set the adapter.
@@ -218,6 +206,7 @@ public class MembersListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         membersAdapter.swapCursor(data);
+        totalSum = 0;
         Log.d("Mem Cursor", "Members in cursor=" + data.getCount());
     }
 
@@ -239,7 +228,7 @@ public class MembersListFragment
      *
      * @param cashCollected
      */
-    private void updateCashCollected(Editable cashCollected) {
+    public void updateCashCollected(Editable cashCollected) {
         TextView txtTotalCollection = (TextView) getActivity().findViewById(R.id.txtTotalCollection);
         if (!cashCollected
                 .toString()
@@ -263,66 +252,6 @@ public class MembersListFragment
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    private class CashCollectionWatcher implements TextWatcher {
-        /**
-         * This method is called to notify you that, within <code>s</code>,
-         * the <code>count</code> characters beginning at <code>start</code>
-         * are about to be replaced by new text with length <code>after</code>.
-         * It is an error to attempt to make changes to <code>s</code> from
-         * this callback.
-         *
-         * @param s
-         * @param start
-         * @param count
-         * @param after
-         */
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        /**
-         * This method is called to notify you that, within <code>s</code>,
-         * the <code>count</code> characters beginning at <code>start</code>
-         * have just replaced old text that had length <code>before</code>.
-         * It is an error to attempt to make changes to <code>s</code> from
-         * this callback.
-         *
-         * @param s
-         * @param start
-         * @param before
-         * @param count
-         */
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        /**
-         * Update the cash balances in total field.
-         * ------------------------------------------------------------
-         * This method is called to notify you that, somewhere within
-         * <code>cashCollected</code>, the text has been changed.
-         * It is legitimate to make further changes to <code>cashCollected</code> from
-         * this callback, but be careful not to get yourself into an infinite
-         * loop, because any changes you make will cause this method to be
-         * called again recursively.
-         * (You are not told where the change took place because other
-         * afterTextChanged() methods may already have made other changes
-         * and invalidated the offsets.  But if you need to know here,
-         * you can use {@link Spannable#setSpan} in {@link #onTextChanged}
-         * to mark your place and then look up from here where the span
-         * ended up.
-         *
-         * @param cashCollected
-         */
-        @Override
-        public void afterTextChanged(Editable cashCollected) {
-            // The cash collected
-            updateCashCollected(cashCollected);
-        }
     }
 
     private class SaveCollectionListener implements View.OnClickListener {

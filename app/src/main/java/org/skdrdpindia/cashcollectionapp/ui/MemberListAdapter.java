@@ -2,6 +2,9 @@ package org.skdrdpindia.cashcollectionapp.ui;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.text.Editable;
+import android.text.Spannable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,17 +27,20 @@ public class MemberListAdapter extends SimpleCursorAdapter
         implements SimpleCursorAdapter.ViewBinder {
 
     private Context context;
+    private MembersListFragment parentFragment;
     private ArrayList<MemberListHolder> memberListHolders;
+    private ArrayList<View> memberListItems;
 
     /**
      * Standard constructor
      * <p/>
      * Constructor implements all the defaults for the views required.
      *
-     * @param context The context where the ListView associated with this
-     *                MemberListItemFactory is running.
+     * @param context        The context where the ListView associated with this
+     *                       MemberListItemFactory is running.
+     * @param parentFragment The parent fragment reference so that its callback is accesible.
      */
-    public MemberListAdapter(Context context) {
+    public MemberListAdapter(Context context, MembersListFragment parentFragment) {
         super(context,
                 R.layout.member_list_item,
                 null,
@@ -52,7 +58,9 @@ public class MemberListAdapter extends SimpleCursorAdapter
                         R.id.chkIsPresent},
                 1);
         this.context = context;
-        memberListHolders = new ArrayList<MemberListHolder>();
+        memberListHolders = new ArrayList<>();
+        memberListItems = new ArrayList<>();
+        this.parentFragment = parentFragment;
     }
 
     /**
@@ -84,10 +92,12 @@ public class MemberListAdapter extends SimpleCursorAdapter
             throw new IllegalStateException("couldn't move cursor to position " + position);
         }
 
-        if (convertView == null) {
-            memberListItem = super.newView(context, AppState.status.membersList, parent);
+        // Inflate new member list item and return it.
+        memberListItem = super.newView(context, cursor, parent);
+        /*if (convertView == null) {
+            memberListItem = super.newView(context, cursor, parent);
 
-            /*Log.d("Mem Adapter", "New view: Member ID is ="
+            Log.d("Mem Adapter", "New view: Member ID is ="
                     + cursor
                     .getLong(
                             cursor
@@ -96,20 +106,23 @@ public class MemberListAdapter extends SimpleCursorAdapter
                     + cursor
                     .getLong(
                             cursor
-                                    .getColumnIndex(GroupsContract.MemberInfo._ID)));*/
+                                    .getColumnIndex(GroupsContract.MemberInfo._ID)));
         } else {
             memberListItem = convertView;
 
-            /*Log.d("Mem Adapter", "Old view: Member ID is ="
+            Log.d("Mem Adapter", "Old view: Member ID is ="
                     + cursor
                     .getLong(
                             cursor
-                                    .getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID)));*/
-        }
+                                    .getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID)));
+        }*/
 
         // Initialize the member data by binding all the views with their respective data.
-        attachHolder(position, memberListItem, cursor);
         bindView(memberListItem, context, cursor);
+        memberListItems.add(position, memberListItem);
+        attachHolder(position, memberListItem, cursor);
+
+
 
 
         Log.d("Mem Adapter", "Member binding view for:"
@@ -133,6 +146,10 @@ public class MemberListAdapter extends SimpleCursorAdapter
         memberListHolder.savings = cursor.getInt(cursor.getColumnIndex(GroupsContract.MemberInfo.SAVINGS));
         memberListHolder.installment = cursor.getInt(cursor.getColumnIndex(GroupsContract.MemberInfo.INSTALLMENT));
         memberListHolder.memberName = cursor.getString(cursor.getColumnIndex(GroupsContract.MemberInfo.MEMBER_NAME));
+
+        memberListHolder.edtxtInstallment.addTextChangedListener(new CashCollectionWatcher(memberListHolder.edtxtInstallment, position));
+        memberListHolder.edtxtSavings.addTextChangedListener(new CashCollectionWatcher(memberListHolder.edtxtSavings, position));
+
 
         memberListItem.setTag(memberListHolder);
         memberListHolders.add(position, memberListHolder);
@@ -162,12 +179,6 @@ public class MemberListAdapter extends SimpleCursorAdapter
                                 cursor.getInt(cursor.getColumnIndex(GroupsContract.MemberInfo.INSTALLMENT))
                         )
                 );
-                //Attach a listener
-                ((EditText) view).addTextChangedListener(
-                        MembersListFragment
-                                .getInstance()
-                                .getCollectionWatcher()
-                );
                 break;
             case R.id.edtxtSavings:
                 setEditableText(
@@ -175,12 +186,6 @@ public class MemberListAdapter extends SimpleCursorAdapter
                         Integer.toString(
                                 cursor.getInt(cursor.getColumnIndex(GroupsContract.MemberInfo.SAVINGS))
                         )
-                );
-                //Attach a listener
-                ((EditText) view).addTextChangedListener(
-                        MembersListFragment
-                                .getInstance()
-                                .getCollectionWatcher()
                 );
                 break;
             case R.id.chkIsPresent:
@@ -284,6 +289,33 @@ public class MemberListAdapter extends SimpleCursorAdapter
         return memberListHolder.memberID;
     }
 
+    /**
+     * private method to update installment amount of given member at given position.
+     *
+     * @param position
+     * @param installment
+     */
+    private void setInstallment(int position, int installment) {
+        setInstallment(memberListHolders.get(position), installment);
+    }
+
+    private void setInstallment(MemberListHolder holder, int installment) {
+        holder.installment = installment;
+    }
+
+    /**
+     * private method to update savings amount of given member at given position.
+     *
+     * @param position
+     * @param savings
+     */
+    private void setSavings(int position, int savings) {
+        setSavings(memberListHolders.get(position), savings);
+    }
+
+    private void setSavings(MemberListHolder holder, int savings) {
+        holder.savings = savings;
+    }
     private class MemberListHolder {
         TextView txtMemberID, txtMemberName;
         EditText edtxtInstallment, edtxtSavings;
@@ -292,5 +324,83 @@ public class MemberListAdapter extends SimpleCursorAdapter
         boolean isPresent;
         long memberID;
         int installment, savings;
+    }
+
+    /**
+     * Text Change Listener to update label when text is changed and also updates the row's in memory data.
+     * Created by harsh on 7/13/2015.
+     */
+    class CashCollectionWatcher implements TextWatcher {
+        private EditText callingView;
+        private int position;
+
+        public CashCollectionWatcher(EditText caller, int position) {
+            callingView = caller;
+            this.position = position;
+        }
+
+        /**
+         * This method is called to notify you that, within <code>s</code>,
+         * the <code>count</code> characters beginning at <code>start</code>
+         * are about to be replaced by new text with length <code>after</code>.
+         * It is an error to attempt to make changes to <code>s</code> from
+         * this callback.
+         *
+         * @param s
+         * @param start
+         * @param count
+         * @param after
+         */
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        /**
+         * This method is called to notify you that, within <code>s</code>,
+         * the <code>count</code> characters beginning at <code>start</code>
+         * have just replaced old text that had length <code>before</code>.
+         * It is an error to attempt to make changes to <code>s</code> from
+         * this callback.
+         *
+         * @param s
+         * @param start
+         * @param before
+         * @param count
+         */
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        /**
+         * Update the cash balances in total field.
+         * ------------------------------------------------------------
+         * This method is called to notify you that, somewhere within
+         * <code>cashCollected</code>, the text has been changed.
+         * It is legitimate to make further changes to <code>cashCollected</code> from
+         * this callback, but be careful not to get yourself into an infinite
+         * loop, because any changes you make will cause this method to be
+         * called again recursively.
+         * (You are not told where the change took place because other
+         * afterTextChanged() methods may already have made other changes
+         * and invalidated the offsets.  But if you need to know here,
+         * you can use {@link Spannable#setSpan} in {@link #onTextChanged}
+         * to mark your place and then look up from here where the span
+         * ended up.
+         *
+         * @param cashCollected
+         */
+        @Override
+        public void afterTextChanged(Editable cashCollected) {
+            // Update Label indicating total collection.
+            parentFragment.updateCashCollected(cashCollected);
+            // Set the text value in holder.
+            if (callingView.getId() == R.id.edtxtInstallment) {
+                MemberListAdapter.this.setInstallment(position, Integer.parseInt(cashCollected.toString()));
+            } else {
+                MemberListAdapter.this.setSavings(position, Integer.parseInt(cashCollected.toString()));
+            }
+        }
     }
 }
