@@ -6,7 +6,6 @@
              tools:context="org.skdrdpindia.cashcollectionapp.ui.GroupListFragment"
              android:background="#C8E6C9">
 
-    <!-- TODO: Update blank fragment layout -->
     <ListView
         android:id="@+id/GroupListView"
         android:layout_width="match_parent"

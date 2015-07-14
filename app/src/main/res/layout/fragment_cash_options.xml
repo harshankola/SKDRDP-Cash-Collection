@@ -6,7 +6,6 @@
               android:orientation="vertical"
               tools:context="org.skdrdpindia.cashcollectionapp.ui.CashOptionsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
 
     <Button
         android:id="@+id/btnCashCollection"

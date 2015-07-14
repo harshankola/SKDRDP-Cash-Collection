@@ -6,8 +6,6 @@
               android:orientation="vertical"
               tools:context="org.skdrdpindia.cashcollectionapp.ui.UploadDataFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <Button
         android:id="@+id/btnCreateJson"
         android:layout_width="match_parent"

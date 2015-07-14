@@ -235,7 +235,6 @@ public class GroupsContentProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        // TODO: Implement this to handle requests to update one or more rows.
         int rowsUpdated = 0;
         SQLiteDatabase db;
         Log.d("Groups Provider", "Update method:selection:" + selection + " Uri:" + uri.toString());
