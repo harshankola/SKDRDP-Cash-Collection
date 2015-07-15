@@ -136,14 +136,14 @@ public class GroupListFragment extends Fragment
         groupAbsentDialogBuilder
                 .setTitle("Is the group Absent?")
                 .setMessage("Group Selected is:" + groupSelected)
-                .setPositiveButton("Mark Absent", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Mark Group as absent.
                         markGroupAbsent(groupSelected);
                     }
                 })
-                .setNegativeButton("Mark Present", new DialogInterface.OnClickListener() {
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // groups is Present, hence go for Collection.

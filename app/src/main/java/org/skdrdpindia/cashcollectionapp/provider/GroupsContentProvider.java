@@ -27,6 +27,14 @@ public class GroupsContentProvider extends ContentProvider {
                     + "/"
                     + GroupsContract.MemberInfo.TABLE_NAME);
 
+    public GroupsDbHelper getGroupsDbHelper() {
+        return groupsDbHelper;
+    }
+
+    public MembersDbHelper getMembersDbHelper() {
+        return membersDbHelper;
+    }
+
     //Reference to database helper.
     private GroupsDbHelper groupsDbHelper;
     private MembersDbHelper membersDbHelper;
