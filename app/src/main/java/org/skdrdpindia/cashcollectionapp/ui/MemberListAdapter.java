@@ -30,6 +30,7 @@ public class MemberListAdapter extends SimpleCursorAdapter
     private MembersListFragment parentFragment;
     private ArrayList<MemberListHolder> memberListHolders;
     private ArrayList<View> memberListItems;
+    private Cursor cursor;
 
     /**
      * Standard constructor
@@ -64,6 +65,34 @@ public class MemberListAdapter extends SimpleCursorAdapter
     }
 
     /**
+     * binds the view to row data in the cursor.
+     */
+    public void bindView(View view, int position, Cursor cursor) {
+        for (int i = 0; i < cursor.getColumnCount(); i++) {
+            setViewValue(view, position);
+        }
+    }
+
+    private void setViewValue(View view, int position) {
+
+        MemberListHolder holder = memberListHolders.get(position);
+        // if change the values in view based on its position.
+        switch (view.getId()) {
+            case R.id.edtxtInstallment:
+                holder.edtxtInstallment.setText(holder.installment);
+                break;
+            case R.id.edtxtSavings:
+                holder.edtxtSavings.setText(holder.savings);
+            case R.id.chkIsPresent:
+                holder.chkIsPresent.setChecked(holder.isPresent);
+            case R.id.txtMemberName:
+                holder.txtMemberName.setText(holder.memberName);
+            case R.id.txtMemberId:
+                holder.txtMemberID.setText(holder.memberID + "");
+        }
+    }
+
+    /**
      * Get a View that displays the data at the specified position in the data set. You can either
      * create a View manually or inflate it from an XML layout file. When the View is inflated, the
      * parent View (GridView, ListView...) will apply default layout parameters unless you use
@@ -84,8 +113,7 @@ public class MemberListAdapter extends SimpleCursorAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View memberListItem;
-        MemberListHolder memberListHolder;
-        Cursor cursor = getCursor();
+        cursor = getCursor();
 
         // Throw an exception if cursor doesn't have elements at given said position.
         if (!cursor.moveToPosition(position)) {
@@ -94,34 +122,10 @@ public class MemberListAdapter extends SimpleCursorAdapter
 
         // Inflate new member list item and return it.
         memberListItem = super.newView(context, cursor, parent);
-        /*if (convertView == null) {
-            memberListItem = super.newView(context, cursor, parent);
-
-            Log.d("Mem Adapter", "New view: Member ID is ="
-                    + cursor
-                    .getLong(
-                            cursor
-                                    .getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID)));
-            Log.d("Mem Adapter", "_ID id="
-                    + cursor
-                    .getLong(
-                            cursor
-                                    .getColumnIndex(GroupsContract.MemberInfo._ID)));
-        } else {
-            memberListItem = convertView;
-
-            Log.d("Mem Adapter", "Old view: Member ID is ="
-                    + cursor
-                    .getLong(
-                            cursor
-                                    .getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID)));
-        }*/
-
-        // Initialize the member data by binding all the views with their respective data.
-        bindView(memberListItem, context, cursor);
         memberListItems.add(position, memberListItem);
-        attachHolder(position, memberListItem, cursor);
 
+        attachHolder(position, memberListItem, cursor);
+        bindView(memberListItem, position, cursor);
 
 
 
@@ -134,25 +138,19 @@ public class MemberListAdapter extends SimpleCursorAdapter
     }
 
     private void attachHolder(int position, View memberListItem, Cursor cursor) {
-        MemberListHolder memberListHolder = new MemberListHolder();
+        MemberListHolder memberListHolder = memberListHolders.get(position);
         memberListHolder.txtMemberID = (TextView) memberListItem.findViewById(R.id.txtMemberId);
         memberListHolder.txtMemberName = (TextView) memberListItem.findViewById(R.id.txtMemberName);
         memberListHolder.edtxtInstallment = (EditText) memberListItem.findViewById(R.id.edtxtInstallment);
         memberListHolder.edtxtSavings = (EditText) memberListItem.findViewById(R.id.edtxtSavings);
         memberListHolder.chkIsPresent = (CheckBox) memberListItem.findViewById(R.id.chkIsPresent);
 
-        memberListHolder.isPresent = cursor.getInt(cursor.getColumnIndex(GroupsContract.MemberInfo.IS_PRESENT)) == 1;
-        memberListHolder.memberID = cursor.getLong(cursor.getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID));
-        memberListHolder.savings = cursor.getInt(cursor.getColumnIndex(GroupsContract.MemberInfo.SAVINGS));
-        memberListHolder.installment = cursor.getInt(cursor.getColumnIndex(GroupsContract.MemberInfo.INSTALLMENT));
-        memberListHolder.memberName = cursor.getString(cursor.getColumnIndex(GroupsContract.MemberInfo.MEMBER_NAME));
-
         memberListHolder.edtxtInstallment.addTextChangedListener(new CashCollectionWatcher(memberListHolder.edtxtInstallment, position));
         memberListHolder.edtxtSavings.addTextChangedListener(new CashCollectionWatcher(memberListHolder.edtxtSavings, position));
-
+        memberListHolder.chkIsPresent.setOnClickListener(new IsPresentWatcher(memberListHolder.chkIsPresent, position));
 
         memberListItem.setTag(memberListHolder);
-        memberListHolders.add(position, memberListHolder);
+        memberListHolders.set(position, memberListHolder);
     }
 
     /**
@@ -169,63 +167,7 @@ public class MemberListAdapter extends SimpleCursorAdapter
      */
     @Override
     public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-
-        // Bind the data from cursor to view.
-        switch (view.getId()) {
-            case R.id.edtxtInstallment:
-                setEditableText(
-                        (EditText) view,
-                        Integer.toString(
-                                cursor.getInt(cursor.getColumnIndex(GroupsContract.MemberInfo.INSTALLMENT))
-                        )
-                );
-                break;
-            case R.id.edtxtSavings:
-                setEditableText(
-                        (EditText) view,
-                        Integer.toString(
-                                cursor.getInt(cursor.getColumnIndex(GroupsContract.MemberInfo.SAVINGS))
-                        )
-                );
-                break;
-            case R.id.chkIsPresent:
-                setChecked(
-                        (CheckBox) view,
-                        (cursor.getInt(cursor.getColumnIndex(GroupsContract.MemberInfo.IS_PRESENT)) == 1));
-                break;
-            case R.id.txtMemberName:
-                ((TextView) view).setText(
-                        cursor.getString(cursor.getColumnIndex(GroupsContract.MemberInfo.MEMBER_NAME))
-                );
-                break;
-            case R.id.txtMemberId:
-                ((TextView) view).setText(
-                        Long.toString(cursor.getLong(cursor.getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID)))
-                );
-        }
         return true;
-    }
-
-    /**
-     * sets the check box in list view item to its default state or the one sent.
-     * Used during initialization from cursor and event getting fired.
-     *
-     * @param checkBox instance of checkbox view to be set.
-     * @param choice   boolean value to be set.
-     */
-    public void setChecked(CheckBox checkBox, boolean choice) {
-        checkBox.setChecked(choice);
-    }
-
-    /**
-     * sets the edit texts of Installment and Savings to its default value of 0
-     * This is used during initialization and text entry event
-     *
-     * @param editText
-     * @param s
-     */
-    public void setEditableText(EditText editText, String s) {
-        editText.setText(s);
     }
 
     /**
@@ -289,6 +231,14 @@ public class MemberListAdapter extends SimpleCursorAdapter
         return memberListHolder.memberID;
     }
 
+    private void setEditState(int position, boolean state) {
+        setEditState(memberListHolders.get(position), state);
+    }
+
+    private void setEditState(MemberListHolder holder, boolean state) {
+        holder.isDataEdited = state;
+    }
+
     /**
      * private method to update installment amount of given member at given position.
      *
@@ -299,8 +249,33 @@ public class MemberListAdapter extends SimpleCursorAdapter
         setInstallment(memberListHolders.get(position), installment);
     }
 
+    @Override
+    public Cursor swapCursor(Cursor c) {
+        // Prepare the holders tags.
+        if (c != null) {
+            createHolders(c);
+        }
+        return super.swapCursor(c);
+    }
+
+    private void createHolders(Cursor cursor) {
+        int position = 0;
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            MemberListHolder memberListHolder = new MemberListHolder();
+            memberListHolder.isPresent = cursor.getInt(cursor.getColumnIndex(GroupsContract.MemberInfo.IS_PRESENT)) == 1;
+            memberListHolder.memberID = cursor.getLong(cursor.getColumnIndex(GroupsContract.MemberInfo.MEMBER_ID));
+            memberListHolder.savings = cursor.getInt(cursor.getColumnIndex(GroupsContract.MemberInfo.SAVINGS));
+            memberListHolder.installment = cursor.getInt(cursor.getColumnIndex(GroupsContract.MemberInfo.INSTALLMENT));
+            memberListHolder.memberName = cursor.getString(cursor.getColumnIndex(GroupsContract.MemberInfo.MEMBER_NAME));
+            memberListHolder.isDataEdited = false;
+            memberListHolders.add(position, memberListHolder);
+        }
+    }
+
     private void setInstallment(MemberListHolder holder, int installment) {
-        holder.installment = installment;
+        if (holder.isDataEdited) {
+            holder.installment = installment;
+        }
     }
 
     /**
@@ -314,14 +289,27 @@ public class MemberListAdapter extends SimpleCursorAdapter
     }
 
     private void setSavings(MemberListHolder holder, int savings) {
-        holder.savings = savings;
+        if (holder.isDataEdited) {
+            holder.savings = savings;
+        }
     }
+
+    private void setIsPresent(int position, boolean checked) {
+        setIsPresent(memberListHolders.get(position), checked);
+    }
+
+    private void setIsPresent(MemberListHolder holder, boolean checked) {
+        if (holder.isDataEdited) {
+            holder.isPresent = checked;
+        }
+    }
+
     private class MemberListHolder {
         TextView txtMemberID, txtMemberName;
         EditText edtxtInstallment, edtxtSavings;
         CheckBox chkIsPresent;
         String memberName;
-        boolean isPresent;
+        boolean isPresent, isDataEdited;
         long memberID;
         int installment, savings;
     }
@@ -395,12 +383,35 @@ public class MemberListAdapter extends SimpleCursorAdapter
         public void afterTextChanged(Editable cashCollected) {
             // Update Label indicating total collection.
             parentFragment.updateCashCollected(cashCollected);
+            MemberListAdapter.this.setEditState(position, true);
             // Set the text value in holder.
             if (callingView.getId() == R.id.edtxtInstallment) {
                 MemberListAdapter.this.setInstallment(position, Integer.parseInt(cashCollected.toString()));
             } else {
                 MemberListAdapter.this.setSavings(position, Integer.parseInt(cashCollected.toString()));
             }
+            // Update the cursor.
+        }
+    }
+
+    private class IsPresentWatcher implements View.OnClickListener {
+        private final int position;
+        private final CheckBox chkIsPresent;
+
+        public IsPresentWatcher(CheckBox chkIsPresent, int position) {
+            this.chkIsPresent = chkIsPresent;
+            this.position = position;
+        }
+
+        /**
+         * Called when a view has been clicked.
+         *
+         * @param v The view that was clicked.
+         */
+        @Override
+        public void onClick(View v) {
+            MemberListAdapter.this.setEditState(position, true);
+            MemberListAdapter.this.setIsPresent(position, chkIsPresent.isChecked());
         }
     }
 }
