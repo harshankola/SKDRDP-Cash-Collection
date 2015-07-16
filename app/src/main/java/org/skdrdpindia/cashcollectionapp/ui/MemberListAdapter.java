@@ -67,8 +67,8 @@ public class MemberListAdapter extends SimpleCursorAdapter
     /**
      * binds the view to row data in the cursor.
      */
-    public void bindView(View view, int position, Cursor cursor) {
-        for (int i = 0; i < cursor.getColumnCount(); i++) {
+    public void bindView(View view, int position) {
+        for (int i = 0; i < 5; i++) {
             setViewValue(view, position);
         }
     }
@@ -124,8 +124,8 @@ public class MemberListAdapter extends SimpleCursorAdapter
         memberListItem = super.newView(context, cursor, parent);
         memberListItems.add(position, memberListItem);
 
-        attachHolder(position, memberListItem, cursor);
-        bindView(memberListItem, position, cursor);
+        attachHolder(position, memberListItem);
+        bindView(memberListItem, position);
 
 
 
@@ -137,7 +137,7 @@ public class MemberListAdapter extends SimpleCursorAdapter
         return memberListItem;
     }
 
-    private void attachHolder(int position, View memberListItem, Cursor cursor) {
+    private void attachHolder(int position, View memberListItem) {
         MemberListHolder memberListHolder = memberListHolders.get(position);
         memberListHolder.txtMemberID = (TextView) memberListItem.findViewById(R.id.txtMemberId);
         memberListHolder.txtMemberName = (TextView) memberListItem.findViewById(R.id.txtMemberName);
@@ -154,6 +154,8 @@ public class MemberListAdapter extends SimpleCursorAdapter
     }
 
     /**
+     * Unused method. Disregard it.
+     * ----------------------------------------------------------------
      * Binds the Cursor column defined by the specified index to the specified view.
      * <p/>
      * When binding is handled by this ViewBinder, this method must return true.
@@ -170,12 +172,6 @@ public class MemberListAdapter extends SimpleCursorAdapter
         return true;
     }
 
-    /**
-     * overloaded method which returns whether the given member at given view was present or not.
-     *
-     * @param memberListHolder holder object from which data is returned.
-     * @return isPresent
-     */
     private boolean isPresent(MemberListHolder memberListHolder) {
         return memberListHolder.isPresent;
     }
@@ -190,13 +186,6 @@ public class MemberListAdapter extends SimpleCursorAdapter
         return isPresent(memberListHolders.get(position));
     }
 
-    /**
-     * overloaded method which returns the cash collected from members.
-     *
-     * @param memberListHolder
-     * @return collections[] array containing collections.
-     * [0] is Installment, [1] is Savings.
-     */
     private int[] getMembersCollection(MemberListHolder memberListHolder) {
         return new int[]{memberListHolder.installment, memberListHolder.savings};
     }
@@ -221,12 +210,6 @@ public class MemberListAdapter extends SimpleCursorAdapter
         return getMembersID(memberListHolders.get(position));
     }
 
-    /**
-     * Overloaded method which returns the Member ID of the member.
-     *
-     * @param memberListHolder
-     * @return
-     */
     private long getMembersID(MemberListHolder memberListHolder) {
         return memberListHolder.memberID;
     }
@@ -239,12 +222,6 @@ public class MemberListAdapter extends SimpleCursorAdapter
         holder.isDataEdited = state;
     }
 
-    /**
-     * private method to update installment amount of given member at given position.
-     *
-     * @param position
-     * @param installment
-     */
     private void setInstallment(int position, int installment) {
         setInstallment(memberListHolders.get(position), installment);
     }
@@ -278,12 +255,6 @@ public class MemberListAdapter extends SimpleCursorAdapter
         }
     }
 
-    /**
-     * private method to update savings amount of given member at given position.
-     *
-     * @param position
-     * @param savings
-     */
     private void setSavings(int position, int savings) {
         setSavings(memberListHolders.get(position), savings);
     }
