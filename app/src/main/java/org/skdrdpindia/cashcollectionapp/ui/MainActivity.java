@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.skdrdpindia.cashcollectionapp.R;
 import org.skdrdpindia.cashcollectionapp.provider.GroupsContentProvider;
@@ -116,6 +117,8 @@ public class MainActivity extends ActionBarActivity
         }
 
         /**
+         * Display a message to user that update has been completed.
+         * ---------------------------------------------------------
          * <p>Runs on the UI thread after {@link #doInBackground}. The
          * specified result is the value returned by {@link #doInBackground}.</p>
          * <p/>
@@ -128,6 +131,9 @@ public class MainActivity extends ActionBarActivity
          */
         @Override
         protected void onPostExecute(Object o) {
+            Toast
+                    .makeText(MainActivity.this.getBaseContext(), "Database has been updated.", Toast.LENGTH_LONG)
+                    .show();
             super.onPostExecute(o);
         }
 
@@ -214,6 +220,7 @@ public class MainActivity extends ActionBarActivity
             ContentValues memberData = new ContentValues();
             memberData.put(GroupsContract.MemberInfo.INSTALLMENT, membersCollection[0]);
             memberData.put(GroupsContract.MemberInfo.SAVINGS, membersCollection[1]);
+            // If the member was present then 1 is inserted into Db as booleans are not used.
             memberData.put(GroupsContract.MemberInfo.IS_PRESENT, presence ? 1 : 0);
             Uri membersProviderUri = Uri.withAppendedPath(
                     GroupsContentProvider.MEMBERS_PROVIDER_URI,
@@ -226,6 +233,11 @@ public class MainActivity extends ActionBarActivity
         }
 
         /**
+         * Does the handling of appropriate action based action parameter sent in  bundle.
+         * The 2 supported actions are Saving of Collection and  Marking group as Absent.
+         * The group on which these actions should be performed has to be sent expicitly
+         * by caller in the bundle itself.
+         * ----------------------------------------------------------------------------
          * Override this method to perform a computation on a background thread. The
          * specified parameters are the parameters passed to {@link #execute}
          * by the caller of this task.
